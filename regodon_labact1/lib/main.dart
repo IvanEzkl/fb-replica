@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '/screens/home_screen.dart';
 import '/screens/newsfeed_screen.dart';
+import '/screens/profile_screen.dart';
 
 void main() => runApp(const IvanFacebook());
 
-class IvanFacebook extends StatelessWidget { 
+class IvanFacebook extends StatelessWidget {
   const IvanFacebook({super.key});
 
   @override
@@ -22,6 +23,7 @@ class IvanFacebook extends StatelessWidget {
           routes: {
             '/newsfeed': (context) => const NewsFeedScreen(),
             '/home': (context) => const HomeScreen(),
+            '/profile': (context) => const ProfileScreen(),
           },
         );
       },

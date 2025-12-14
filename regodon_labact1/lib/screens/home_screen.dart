@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../constant.dart';
 import '../screens/newsfeed_screen.dart';
 import '../screens/notification_screen.dart';
+import '../screens/profile_screen.dart';
 import '../widgets/custom_font.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -16,7 +17,6 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   final _pageController = PageController();
 
-  
   final List<String> _titles = [
     'Friendster', // Your App Name
     'Notifications',
@@ -48,9 +48,10 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           const NewsFeedScreen(),
           const NotificationScreen(),
-          // Placeholders for the new tabs
-          Center(child: Text("Profile Placeholder", style: TextStyle(fontSize: 20.sp))),
-          Center(child: Text("Menu Placeholder", style: TextStyle(fontSize: 20.sp))),
+          const ProfileScreen(),
+          Center(
+            child: Text("Menu Placeholder", style: TextStyle(fontSize: 20.sp)),
+          ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -62,7 +63,10 @@ class _HomeScreenState extends State<HomeScreen> {
         currentIndex: _selectedIndex,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Notifications'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: 'Notifications',
+          ),
           // New Placeholder Items
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
           BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'Menu'),
