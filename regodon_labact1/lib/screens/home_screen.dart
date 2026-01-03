@@ -20,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<String> _titles = [
     'Friendster', // Your App Name
     'Notifications',
-    'Profile',
+    'Ivan Ezekiel Regodon',
     'Menu',
   ];
 

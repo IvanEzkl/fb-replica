@@ -13,29 +13,29 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  
   int followers = 1250;
   int following = 342;
 
-  
   final List<Map<String, dynamic>> profilePosts = [
     {
       'userName': 'Ivan Ezekiel Regodon',
-      'postContent': 'Felt cute might delete later 😎',
+      'postContent': 'We cute',
       'date': '2 hours ago',
       'likes': 45,
       'comments': 12,
       'shares': 3,
       'hasImage': true,
+      'imageUrl': 'assets/images/bebi.jpg',
     },
     {
       'userName': 'Ivan Ezekiel Regodon',
-      'postContent': 'Just finished a great workout session! 💪',
+      'postContent': 'First day sa gym, nabawasan ako ng 80 pesos!',
       'date': '1 day ago',
       'likes': 32,
       'comments': 8,
       'shares': 2,
       'hasImage': false,
+      'imageUrl': '',
     },
   ];
 
@@ -61,7 +61,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    
                     Stack(
                       clipBehavior: Clip.none,
                       children: [
@@ -71,7 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           decoration: BoxDecoration(
                             color: Colors.grey[300],
                             image: const DecorationImage(
-                              image: NetworkImage(""),
+                              image: AssetImage("assets/images/pogi.jpg"),
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -84,7 +83,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             children: [
                               const CircleAvatar(
                                 radius: 50,
-                                backgroundImage: NetworkImage(""),
+                                backgroundImage: AssetImage(
+                                  "assets/icons/superpogi.jpg",
+                                ),
                               ),
                               Positioned(
                                 bottom: 0,
@@ -105,7 +106,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ],
                     ),
                     SizedBox(height: ScreenUtil().setHeight(55)),
-                    
+
                     Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: ScreenUtil().setWidth(20),
@@ -136,7 +137,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     SizedBox(height: ScreenUtil().setHeight(10)),
-                    
+
                     Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: ScreenUtil().setWidth(20),
@@ -147,13 +148,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: Column(
                               children: [
                                 CustomFont(
-                                  text: '7',
+                                  text: followers.toString(),
                                   fontSize: ScreenUtil().setSp(16),
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
                                 ),
                                 CustomFont(
-                                  text: 'Posts',
+                                  text: 'Followers',
                                   fontSize: ScreenUtil().setSp(12),
                                   color: Colors.grey,
                                 ),
@@ -171,23 +172,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                                 CustomFont(
                                   text: 'Following',
-                                  fontSize: ScreenUtil().setSp(12),
-                                  color: Colors.grey,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            child: Column(
-                              children: [
-                                CustomFont(
-                                  text: followers.toString(),
-                                  fontSize: ScreenUtil().setSp(16),
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                CustomFont(
-                                  text: 'Followers',
                                   fontSize: ScreenUtil().setSp(12),
                                   color: Colors.grey,
                                 ),
@@ -228,151 +212,219 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ];
           },
-          body: SingleChildScrollView(
-            child: Column(
-              children: [
-                TabBar(
-                  indicatorColor: FB_DARK_PRIMARY,
-                  tabs: [
-                    Tab(
-                      child: CustomFont(
-                        text: 'Posts',
-                        fontSize: ScreenUtil().setSp(15),
-                        color: Colors.black,
+          body: Column(
+            children: [
+              TabBar(
+                indicatorColor: FB_DARK_PRIMARY,
+                tabs: [
+                  Tab(
+                    child: CustomFont(
+                      text: 'Posts',
+                      fontSize: ScreenUtil().setSp(15),
+                      color: Colors.black,
+                    ),
+                  ),
+                  Tab(
+                    child: CustomFont(
+                      text: 'About',
+                      fontSize: ScreenUtil().setSp(15),
+                      color: Colors.black,
+                    ),
+                  ),
+                  Tab(
+                    child: CustomFont(
+                      text: 'Photos',
+                      fontSize: ScreenUtil().setSp(15),
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    ListView.builder(
+                      itemCount: profilePosts.length,
+                      itemBuilder: (context, index) {
+                        final post = profilePosts[index];
+                        return NewsFeedCard(
+                          userName: post['userName'],
+                          postContent: post['postContent'],
+                          date: post['date'],
+                          numOfLikes: post['likes'],
+                          numOfComments: post['comments'],
+                          numOfShares: post['shares'],
+                          hasImage: post['hasImage'],
+                          imageUrl: post['imageUrl'] ?? '',
+                        );
+                      },
+                    ),
+
+                    SingleChildScrollView(
+                      child: Padding(
+                        padding: EdgeInsets.all(ScreenUtil().setSp(15)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Details Section
+                            CustomFont(
+                              text: 'Details',
+                              fontSize: ScreenUtil().setSp(18),
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            SizedBox(height: ScreenUtil().setHeight(15)),
+
+                            // Profile/Profession
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: ScreenUtil().setHeight(8),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.work,
+                                    color: Colors.grey[600],
+                                    size: ScreenUtil().setSp(20),
+                                  ),
+                                  SizedBox(width: ScreenUtil().setWidth(12)),
+                                  CustomFont(
+                                    text: 'Junior Developer • Tech Enthusiast',
+                                    fontSize: ScreenUtil().setSp(14),
+                                    color: Colors.black,
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            // Location
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: ScreenUtil().setHeight(8),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.location_on,
+                                    color: Colors.grey[600],
+                                    size: ScreenUtil().setSp(20),
+                                  ),
+                                  SizedBox(width: ScreenUtil().setWidth(12)),
+                                  CustomFont(
+                                    text: 'Missouri, Texas',
+                                    fontSize: ScreenUtil().setSp(14),
+                                    color: Colors.black,
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            // Education
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: ScreenUtil().setHeight(8),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.school,
+                                    color: Colors.grey[600],
+                                    size: ScreenUtil().setSp(20),
+                                  ),
+                                  SizedBox(width: ScreenUtil().setWidth(12)),
+                                  Expanded(
+                                    child: CustomFont(
+                                      text:
+                                          'National University - Manila, 2023-2027',
+                                      fontSize: ScreenUtil().setSp(14),
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            SizedBox(height: ScreenUtil().setHeight(20)),
+
+                            // Skills Section
+                            CustomFont(
+                              text: 'Skills',
+                              fontSize: ScreenUtil().setSp(16),
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            SizedBox(height: ScreenUtil().setHeight(10)),
+                            Wrap(
+                              spacing: ScreenUtil().setWidth(8),
+                              runSpacing: ScreenUtil().setHeight(8),
+                              children: [
+                                _buildSkillChip('Flutter'),
+                                _buildSkillChip('Dart'),
+                                _buildSkillChip('FrontEnd'),
+                                _buildSkillChip('React.js'),
+                              ],
+                            ),
+
+                            SizedBox(height: ScreenUtil().setHeight(20)),
+
+                            // Bio/Description Section
+                            CustomFont(
+                              text: 'Description',
+                              fontSize: ScreenUtil().setSp(18),
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            SizedBox(height: ScreenUtil().setHeight(10)),
+                            CustomFont(
+                              text:
+                                  'Hi! I\'m Ivan Ezekiel Regodon, a junior developer and tech enthusiast. I love creating beautiful and functional apps that make a difference. When I\'m not coding, you can find me exploring new places, playing basketball, or just bed rotting.',
+                              fontSize: ScreenUtil().setSp(14),
+                              color: Colors.grey[700] ?? Colors.grey,
+                            ),
+                            SizedBox(height: ScreenUtil().setHeight(15)),
+                            CustomButton(
+                              buttonName: 'Edit public details',
+                              onPressed: () {},
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    Tab(
-                      child: CustomFont(
-                        text: 'About',
-                        fontSize: ScreenUtil().setSp(15),
-                        color: Colors.black,
+
+                    GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: ScreenUtil().setWidth(5),
+                        mainAxisSpacing: ScreenUtil().setHeight(5),
+                        childAspectRatio: 1,
                       ),
-                    ),
-                    Tab(
-                      child: CustomFont(
-                        text: 'Photos',
-                        fontSize: ScreenUtil().setSp(15),
-                        color: Colors.black,
-                      ),
+                      itemCount: profilePhotos.length,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.grey[300],
+                          ),
+                          child: Image.network(
+                            profilePhotos[index],
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                color: Colors.grey[300],
+                                child: Icon(
+                                  Icons.image,
+                                  color: Colors.grey[600],
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
-                SizedBox(
-                  height: ScreenUtil().setHeight(800),
-                  child: TabBarView(
-                    children: [
-                      
-                      ListView.builder(
-                        itemCount: profilePosts.length,
-                        itemBuilder: (context, index) {
-                          final post = profilePosts[index];
-                          return NewsFeedCard(
-                            userName: post['userName'],
-                            postContent: post['postContent'],
-                            date: post['date'],
-                            numOfLikes: post['likes'],
-                            numOfComments: post['comments'],
-                            numOfShares: post['shares'],
-                            hasImage: post['hasImage'],
-                          );
-                        },
-                      ),
-                      
-                      SingleChildScrollView(
-                        child: Padding(
-                          padding: EdgeInsets.all(ScreenUtil().setSp(15)),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomFont(
-                                text: 'About Me',
-                                fontSize: ScreenUtil().setSp(18),
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              SizedBox(height: ScreenUtil().setHeight(10)),
-                              CustomFont(
-                                text:
-                                    'Hi! I\'m Ivan Ezekiel Regodon, a junior developer and tech enthusiast. I love creating beautiful and functional apps that make a difference. When I\'m not coding, you can find me exploring new places, playing bask, or just bed rotting.',
-                                fontSize: ScreenUtil().setSp(14),
-                                color: Colors.grey[700] ?? Colors.grey,
-                              ),
-                              SizedBox(height: ScreenUtil().setHeight(15)),
-                              CustomFont(
-                                text: 'Skills',
-                                fontSize: ScreenUtil().setSp(16),
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              SizedBox(height: ScreenUtil().setHeight(8)),
-                              Wrap(
-                                spacing: ScreenUtil().setWidth(8),
-                                children: [
-                                  _buildSkillChip('Flutter'),
-                                  _buildSkillChip('Dart'),
-                                  _buildSkillChip('FrontEnd'),
-                                  _buildSkillChip('React.js'),
-                                ],
-                              ),
-                              SizedBox(height: ScreenUtil().setHeight(15)),
-                              CustomFont(
-                                text: 'Education',
-                                fontSize: ScreenUtil().setSp(16),
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              SizedBox(height: ScreenUtil().setHeight(8)),
-                              CustomFont(
-                                text: 'Bachelor of Science in Information Technology specialized in Mobile and Web Application.',
-                                fontSize: ScreenUtil().setSp(14),
-                                color: Colors.grey[700] ?? Colors.grey,
-                              ),
-                              SizedBox(height: ScreenUtil().setHeight(5)),
-                              CustomFont(
-                                text: 'National University - Manila, 2023-2027',
-                                fontSize: ScreenUtil().setSp(12),
-                                color: Colors.grey[500] ?? Colors.grey,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      // Enhancement 5: Photos tab with GridView
-                      GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          crossAxisSpacing: ScreenUtil().setWidth(5),
-                          mainAxisSpacing: ScreenUtil().setHeight(5),
-                          childAspectRatio: 1,
-                        ),
-                        itemCount: profilePhotos.length,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              color: Colors.grey[300],
-                            ),
-                            child: Image.network(
-                              profilePhotos[index],
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Container(
-                                  color: Colors.grey[300],
-                                  child: Icon(
-                                    Icons.image,
-                                    color: Colors.grey[600],
-                                  ),
-                                );
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
