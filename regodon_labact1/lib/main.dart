@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '/screens/home_screen.dart';
 import '/screens/newsfeed_screen.dart';
-import '/screens/profile_screen.dart';
+import '/screens/login_screen.dart';
+import '/screens/register_screen.dart';
 
-void main() => runApp(const IvanFacebook());
+void main() => runApp(const LimFacebook());
 
-class IvanFacebook extends StatelessWidget {
-  const IvanFacebook({super.key});
+class LimFacebook extends StatelessWidget {
+  const LimFacebook({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,12 +18,15 @@ class IvanFacebook extends StatelessWidget {
       builder: (_, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'Friendster', // Enhancement 4: Changed App Name
-          initialRoute: '/home',
+          color: Colors.white,
+          title: 'Facebook Replication',
+          initialRoute: '/login', 
           routes: {
+            '/login': (context) => const LogInScreen(),
+            '/register': (context) => const RegisterScreen(),
             '/newsfeed': (context) => const NewsFeedScreen(),
-            '/home': (context) => const HomeScreen(),
-            '/profile': (context) => const ProfileScreen(),
+
+          
           },
         );
       },

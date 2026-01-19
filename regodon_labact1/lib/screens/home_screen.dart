@@ -7,7 +7,8 @@ import '../screens/profile_screen.dart';
 import '../widgets/custom_font.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final String? username;
+  const HomeScreen({super.key, this.username});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -17,12 +18,18 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   final _pageController = PageController();
 
-  final List<String> _titles = [
-    'Friendster', // Your App Name
-    'Notifications',
-    'Ivan Ezekiel Regodon',
-    'Menu',
-  ];
+  late final List<String> _titles;
+
+  @override
+  void initState() {
+    super.initState();
+    _titles = [
+      'Friendster', // Your App Name
+      'Notifications',
+      widget.username ?? 'Profile', // Dynamic Profile Name
+      'Menu',
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +76,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           // New Placeholder Items
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-          BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'Menu'),
         ],
       ),
     );

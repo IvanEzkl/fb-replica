@@ -21,6 +21,7 @@ dev_dependencies:
 flutter:
   assets:
     - assets/icons/superpogi.jpg
+    - assets/images/logo.png
     - assets/images/pogi.jpg
     - assets/images/bebi.jpg
   uses-material-design: true
