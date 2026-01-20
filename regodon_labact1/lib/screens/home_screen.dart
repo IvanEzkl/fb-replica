@@ -24,9 +24,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _titles = [
-      'Friendster', // Your App Name
+      'Friendster', 
       'Notifications',
-      widget.username ?? 'Profile', // Dynamic Profile Name
+      widget.username ?? 'Profile', 
       'Menu',
     ];
   }
@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           const NewsFeedScreen(),
           const NotificationScreen(),
-          const ProfileScreen(),
+          ProfileScreen(username: widget.username),
           Center(
             child: Text("Menu Placeholder", style: TextStyle(fontSize: 20.sp)),
           ),
@@ -65,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
         showSelectedLabels: false,
         showUnselectedLabels: false,
         onTap: _onTappedBar,
-        type: BottomNavigationBarType.fixed, // Required for 4+ items
+        type: BottomNavigationBarType.fixed, 
         selectedItemColor: FB_PRIMARY,
         currentIndex: _selectedIndex,
         items: const [
@@ -74,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.notifications),
             label: 'Notifications',
           ),
-          // New Placeholder Items
+          
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),

@@ -6,7 +6,8 @@ import '../widgets/post_card.dart';
 import '../constant.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  final String? username;
+  const ProfileScreen({super.key, this.username});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -15,29 +16,35 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   int followers = 1250;
   int following = 342;
+  late List<Map<String, dynamic>> profilePosts;
 
-  final List<Map<String, dynamic>> profilePosts = [
-    {
-      'userName': 'Ivan Ezekiel Regodon',
-      'postContent': 'We cute',
-      'date': '2 hours ago',
-      'likes': 45,
-      'comments': 12,
-      'shares': 3,
-      'hasImage': true,
-      'imageUrl': 'assets/images/bebi.jpg',
-    },
-    {
-      'userName': 'Ivan Ezekiel Regodon',
-      'postContent': 'First day sa gym, nabawasan ako ng 80 pesos!',
-      'date': '1 day ago',
-      'likes': 32,
-      'comments': 8,
-      'shares': 2,
-      'hasImage': false,
-      'imageUrl': '',
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    final userName = widget.username ?? 'Ivan Ezekiel Regodon';
+    profilePosts = [
+      {
+        'userName': userName,
+        'postContent': 'We cute',
+        'date': '2 hours ago',
+        'likes': 45,
+        'comments': 12,
+        'shares': 3,
+        'hasImage': true,
+        'imageUrl': 'assets/images/bebi.jpg',
+      },
+      {
+        'userName': userName,
+        'postContent': 'First day sa gym, nabawasan ako ng 80 pesos!',
+        'date': '1 day ago',
+        'likes': 32,
+        'comments': 8,
+        'shares': 2,
+        'hasImage': false,
+        'imageUrl': '',
+      },
+    ];
+  }
 
   // Enhancement 5: Sample images for GridView
   final List<String> profilePhotos = [
@@ -115,14 +122,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CustomFont(
-                            text: 'Ivan Ezekiel Regodon',
+                            text: widget.username ?? 'Ivan Ezekiel Regodon',
                             fontWeight: FontWeight.bold,
                             fontSize: ScreenUtil().setSp(20),
                             color: Colors.black,
                           ),
                           SizedBox(height: ScreenUtil().setHeight(5)),
                           CustomFont(
-                            text: 'Missouri, Texas',
+                            text: 'National University - Manila',
                             fontSize: ScreenUtil().setSp(15),
                             color: Colors.black,
                           ),
