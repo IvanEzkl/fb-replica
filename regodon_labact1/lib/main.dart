@@ -4,10 +4,10 @@ import '/screens/newsfeed_screen.dart';
 import '/screens/login_screen.dart';
 import '/screens/register_screen.dart';
 
-void main() => runApp(const LimFacebook());
+void main() => runApp(const RegodonFacebook());
 
-class LimFacebook extends StatelessWidget {
-  const LimFacebook({super.key});
+class RegodonFacebook extends StatelessWidget {
+  const RegodonFacebook({super.key});
 
   @override
   Widget build(BuildContext context) {

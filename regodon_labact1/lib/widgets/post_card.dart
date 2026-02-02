@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../constant.dart';
 import 'custom_font.dart';
 import '../screens/detail_screen.dart';
@@ -13,6 +14,8 @@ class NewsFeedCard extends StatelessWidget {
   final int numOfShares;
   final bool hasImage;
   final String imageUrl;
+  final String profileImageUrl;
+
   const NewsFeedCard({
     super.key,
     required this.userName,
@@ -22,6 +25,7 @@ class NewsFeedCard extends StatelessWidget {
     this.numOfShares = 0,
     this.hasImage = false,
     this.imageUrl = '',
+    this.profileImageUrl = '',
     required this.date,
   });
 
@@ -52,16 +56,40 @@ class NewsFeedCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  // Enhancement: Use Placeholder Icon instead of Asset Image
-                  CircleAvatar(
-                    backgroundColor: Colors.grey[300],
-                    radius: ScreenUtil().setSp(20),
-                    child: Icon(
-                      Icons.person,
-                      color: Colors.white,
-                      size: ScreenUtil().setSp(25),
-                    ),
-                  ),
+                  
+                  profileImageUrl.isNotEmpty &&
+                          profileImageUrl.startsWith('http')
+                      ? CircleAvatar(
+                          backgroundColor: Colors.grey[300],
+                          radius: ScreenUtil().setSp(20),
+                          child: ClipOval(
+                            child: CachedNetworkImage(
+                              imageUrl: profileImageUrl,
+                              fit: BoxFit.cover,
+                              width: ScreenUtil().setSp(40),
+                              height: ScreenUtil().setSp(40),
+                              placeholder: (context, url) => Icon(
+                                Icons.person,
+                                color: Colors.white,
+                                size: ScreenUtil().setSp(25),
+                              ),
+                              errorWidget: (context, url, error) => Icon(
+                                Icons.person,
+                                color: Colors.white,
+                                size: ScreenUtil().setSp(25),
+                              ),
+                            ),
+                          ),
+                        )
+                      : CircleAvatar(
+                          backgroundColor: Colors.grey[300],
+                          radius: ScreenUtil().setSp(20),
+                          child: Icon(
+                            Icons.person,
+                            color: Colors.white,
+                            size: ScreenUtil().setSp(25),
+                          ),
+                        ),
                   SizedBox(width: ScreenUtil().setWidth(10)),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,7 +130,6 @@ class NewsFeedCard extends StatelessWidget {
               ),
               SizedBox(height: ScreenUtil().setHeight(5)),
 
-              // Enhancement: Placeholder for Post Image
               hasImage == true
                   ? Container(
                       width: double.infinity,
@@ -113,16 +140,19 @@ class NewsFeedCard extends StatelessWidget {
                       ),
                       child: imageUrl.isNotEmpty
                           ? (imageUrl.startsWith('http')
-                                ? Image.network(
-                                    imageUrl,
+                                ? CachedNetworkImage(
+                                    imageUrl: imageUrl,
                                     fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Icon(
-                                        Icons.image,
+                                    placeholder: (context, url) => Center(
+                                      child: CircularProgressIndicator(
                                         color: Colors.grey[400],
-                                        size: ScreenUtil().setSp(50),
-                                      );
-                                    },
+                                      ),
+                                    ),
+                                    errorWidget: (context, url, error) => Icon(
+                                      Icons.image,
+                                      color: Colors.grey[400],
+                                      size: ScreenUtil().setSp(50),
+                                    ),
                                   )
                                 : Image.asset(
                                     imageUrl,
@@ -193,16 +223,40 @@ class NewsFeedCard extends StatelessWidget {
               ),
               Row(
                 children: [
-                  // Enhancement: Placeholder for Comment Input Avatar
-                  CircleAvatar(
-                    backgroundColor: Colors.grey[300],
-                    radius: ScreenUtil().setSp(15),
-                    child: Icon(
-                      Icons.person,
-                      color: Colors.white,
-                      size: ScreenUtil().setSp(20),
-                    ),
-                  ),
+                  
+                  profileImageUrl.isNotEmpty &&
+                          profileImageUrl.startsWith('http')
+                      ? CircleAvatar(
+                          backgroundColor: Colors.grey[300],
+                          radius: ScreenUtil().setSp(15),
+                          child: ClipOval(
+                            child: CachedNetworkImage(
+                              imageUrl: profileImageUrl,
+                              fit: BoxFit.cover,
+                              width: ScreenUtil().setSp(30),
+                              height: ScreenUtil().setSp(30),
+                              placeholder: (context, url) => Icon(
+                                Icons.person,
+                                color: Colors.white,
+                                size: ScreenUtil().setSp(20),
+                              ),
+                              errorWidget: (context, url, error) => Icon(
+                                Icons.person,
+                                color: Colors.white,
+                                size: ScreenUtil().setSp(20),
+                              ),
+                            ),
+                          ),
+                        )
+                      : CircleAvatar(
+                          backgroundColor: Colors.grey[300],
+                          radius: ScreenUtil().setSp(15),
+                          child: Icon(
+                            Icons.person,
+                            color: Colors.white,
+                            size: ScreenUtil().setSp(20),
+                          ),
+                        ),
                   SizedBox(width: ScreenUtil().setWidth(10)),
                   Container(
                     padding: EdgeInsets.fromLTRB(
