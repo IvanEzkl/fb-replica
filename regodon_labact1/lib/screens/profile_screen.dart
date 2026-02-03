@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../widgets/custom_font.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/post_card.dart';
+import '../widgets/custom_dialogs.dart';
 import '../constant.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -48,13 +49,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // Enhancement 5: Sample images for GridView
   final List<String> profilePhotos = [
-    'https://via.placeholder.com/150/FF5733',
-    'https://via.placeholder.com/150/33FF57',
-    'https://via.placeholder.com/150/3357FF',
-    'https://via.placeholder.com/150/FF33F5',
-    'https://via.placeholder.com/150/F5FF33',
-    'https://via.placeholder.com/150/33FFF5',
+    'assets/images/Image.jpg',
+    'assets/images/Image1.jpg',
+    'assets/images/Image2.jpg',
+    'assets/images/Image3.jpg',
   ];
+
+  Widget _photos() {
+    return GridView.count(
+      primary: false,
+      padding: const EdgeInsets.all(20),
+      crossAxisSpacing: 10,
+      mainAxisSpacing: 10,
+      crossAxisCount: 2,
+      children: <Widget>[
+        _buildPhotoCard('assets/images/Image.jpg'),
+        _buildPhotoCard('assets/images/Image1.jpg'),
+        _buildPhotoCard('assets/images/Image2.jpg'),
+        _buildPhotoCard('assets/images/Image3.jpg'),
+      ],
+    );
+  }
+
+  Widget _buildPhotoCard(String imagePath, {Color? color}) {
+    return GestureDetector(
+      onTap: () => customShowImageDialog(context, imageUrl: imagePath),
+      child: Container(
+        padding: color != null ? const EdgeInsets.all(8) : null,
+        color: color,
+        child: Image.asset(
+          imagePath,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              color: Colors.grey[300],
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.image_not_supported,
+                    size: 40,
+                    color: Colors.grey[600],
+                  ),
+                  Text(
+                    'Image not found',
+                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -398,36 +446,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
 
-                    GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: ScreenUtil().setWidth(5),
-                        mainAxisSpacing: ScreenUtil().setHeight(5),
-                        childAspectRatio: 1,
-                      ),
-                      itemCount: profilePhotos.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.grey[300],
-                          ),
-                          child: Image.network(
-                            profilePhotos[index],
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                color: Colors.grey[300],
-                                child: Icon(
-                                  Icons.image,
-                                  color: Colors.grey[600],
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    ),
+                    _photos(),
                   ],
                 ),
               ),

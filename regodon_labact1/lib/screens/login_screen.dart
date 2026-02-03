@@ -1,4 +1,5 @@
 import '/widgets/custom_textformfield.dart';
+import '/widgets/custom_dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../constant.dart';
@@ -16,6 +17,24 @@ class _LogInScreenState extends State<LogInScreen> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  void login() {
+    if (usernameController.text == 'user' &&
+        passwordController.text == 'user') {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (build) => HomeScreen(username: usernameController.text),
+        ),
+      );
+    } else {
+      customDialog(
+        context,
+        title: 'Error',
+        content: 'Username and password does not matched!',
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,14 +95,7 @@ class _LogInScreenState extends State<LogInScreen> {
                         onTap: () {
                           if (_formKey.currentState!.validate()) {
                             _formKey.currentState!.save();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => HomeScreen(
-                                  username: usernameController.text,
-                                ),
-                              ),
-                            );
+                            login();
                           }
                         },
                         height: ScreenUtil().setHeight(40),
