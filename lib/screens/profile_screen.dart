@@ -467,28 +467,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                           ),
                         ),
-                        // Settings Shortcut Button on Cover Photo
-                        Positioned(
-                          top: ScreenUtil().setHeight(40),
-                          right: ScreenUtil().setWidth(16),
-                          child: CircleAvatar(
-                            backgroundColor: isDark
-                                ? const Color(0xFF1E1E1E).withValues(alpha: 0.85)
-                                : Colors.white.withValues(alpha: 0.85),
-                            child: IconButton(
-                              icon: const Icon(Icons.settings, color: FB_PRIMARY),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        SettingsScreen(user: _currentUser),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
                         Positioned(
                           bottom: -50,
                           left: ScreenUtil().setWidth(20),

@@ -122,6 +122,16 @@ class _HomeScreenState extends State<HomeScreen> {
           color: FB_PRIMARY,
           fontWeight: FontWeight.bold,
         ),
+        actions: [
+          if (_selectedIndex == 2)
+            IconButton(
+              icon: const Icon(Icons.settings, color: FB_PRIMARY),
+              tooltip: 'Settings',
+              onPressed: () {
+                _onTappedBar(3);
+              },
+            ),
+        ],
       ),
       body: PageView(
         controller: _pageController,
