@@ -15,8 +15,14 @@ import 'settings_screen.dart';
 class ProfileScreen extends StatefulWidget {
   final String? username;
   final User? user;
+  final ScrollController? scrollController;
 
-  const ProfileScreen({super.key, this.username, this.user});
+  const ProfileScreen({
+    super.key,
+    this.username,
+    this.user,
+    this.scrollController,
+  });
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -435,6 +441,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       length: 3,
       child: Scaffold(
         body: NestedScrollView(
+          controller: widget.scrollController,
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return [
               SliverToBoxAdapter(

@@ -25,6 +25,12 @@ class _HomeScreenState extends State<HomeScreen> {
   final UserService _userService = UserService();
   User? _currentUser;
 
+  // Individual scroll controllers for each navigation tab
+  final ScrollController _feedScrollController = ScrollController();
+  final ScrollController _notificationsScrollController = ScrollController();
+  final ScrollController _profileScrollController = ScrollController();
+  final ScrollController _settingsScrollController = ScrollController();
+
   late List<String> _titles;
 
   @override
@@ -60,7 +66,45 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _pageController.dispose();
+    _feedScrollController.dispose();
+    _notificationsScrollController.dispose();
+    _profileScrollController.dispose();
+    _settingsScrollController.dispose();
     super.dispose();
+  }
+
+  ScrollController _getScrollControllerForIndex(int index) {
+    switch (index) {
+      case 0:
+        return _feedScrollController;
+      case 1:
+        return _notificationsScrollController;
+      case 2:
+        return _profileScrollController;
+      case 3:
+        return _settingsScrollController;
+      default:
+        return _feedScrollController;
+    }
+  }
+
+  void _onTappedBar(int value) {
+    if (_selectedIndex == value) {
+      // Tapped active tab again -> scroll up to top if scrolled down
+      final controller = _getScrollControllerForIndex(value);
+      if (controller.hasClients && controller.offset > 0) {
+        controller.animateTo(
+          0.0,
+          duration: const Duration(milliseconds: 350),
+          curve: Curves.easeOutCubic,
+        );
+      }
+    } else {
+      setState(() {
+        _selectedIndex = value;
+      });
+      _pageController.jumpToPage(value);
+    }
   }
 
   @override
@@ -87,13 +131,23 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         },
         children: [
-          NewsFeedScreen(user: _currentUser),
-          NotificationScreen(user: _currentUser),
+          NewsFeedScreen(
+            user: _currentUser,
+            scrollController: _feedScrollController,
+          ),
+          NotificationScreen(
+            user: _currentUser,
+            scrollController: _notificationsScrollController,
+          ),
           ProfileScreen(
             user: _currentUser,
             username: _currentUser?.fullName ?? widget.username,
+            scrollController: _profileScrollController,
           ),
-          SettingsScreen(user: _currentUser),
+          SettingsScreen(
+            user: _currentUser,
+            scrollController: _settingsScrollController,
+          ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -116,12 +170,5 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
-  }
-
-  void _onTappedBar(int value) {
-    setState(() {
-      _selectedIndex = value;
-    });
-    _pageController.jumpToPage(value);
   }
 }

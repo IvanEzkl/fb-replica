@@ -10,7 +10,8 @@ import '../widgets/custom_font.dart';
 
 class SettingsScreen extends StatefulWidget {
   final User? user;
-  const SettingsScreen({super.key, this.user});
+  final ScrollController? scrollController;
+  const SettingsScreen({super.key, this.user, this.scrollController});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -64,6 +65,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
       ),
       body: SingleChildScrollView(
+        controller: widget.scrollController,
         child: Padding(
           padding: EdgeInsets.all(ScreenUtil().setSp(16)),
           child: Column(

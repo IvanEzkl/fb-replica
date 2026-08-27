@@ -10,7 +10,8 @@ import '../constants.dart';
 
 class NewsFeedScreen extends StatefulWidget {
   final User? user;
-  const NewsFeedScreen({super.key, this.user});
+  final ScrollController? scrollController;
+  const NewsFeedScreen({super.key, this.user, this.scrollController});
 
   @override
   State<NewsFeedScreen> createState() => _NewsFeedScreenState();
@@ -319,6 +320,7 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
       onRefresh: _fetchPosts,
       color: FB_PRIMARY,
       child: ListView.builder(
+        controller: widget.scrollController,
         itemCount: feedItems.length,
         itemBuilder: (context, index) => feedItems[index],
       ),

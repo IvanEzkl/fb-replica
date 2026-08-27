@@ -6,7 +6,8 @@ import '../widgets/custom_info.dart';
 
 class NotificationScreen extends StatefulWidget {
   final User? user;
-  const NotificationScreen({super.key, this.user});
+  final ScrollController? scrollController;
+  const NotificationScreen({super.key, this.user, this.scrollController});
 
   @override
   State<NotificationScreen> createState() => _NotificationScreenState();
@@ -379,6 +380,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       body: SizedBox(
         width: 1.sw,
         child: ListView.separated(
+          controller: widget.scrollController,
           itemCount: notifications.length,
           separatorBuilder: (context, index) => const Divider(height: 1),
           itemBuilder: (context, index) {
