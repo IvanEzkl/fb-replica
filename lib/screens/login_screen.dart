@@ -2,7 +2,7 @@ import '/widgets/custom_textformfield.dart';
 import '/widgets/custom_dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../constant.dart';
+import '../constants.dart';
 import '../widgets/custom_inkwell_button.dart';
 import 'home_screen.dart';
 

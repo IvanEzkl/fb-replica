@@ -1,6 +1,6 @@
-// ignore_for_file: constant_identifier_names
-
 import 'package:flutter/material.dart';
+
+const String host = 'https://dummyjson.com';
 
 const Color FB_PRIMARY = Color(0xFF9966CC);
 const Color FB_SECONDARY = Color(0xFF7A4DAD);

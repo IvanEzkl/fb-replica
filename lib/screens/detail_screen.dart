@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../widgets/custom_font.dart';
-import '../constant.dart'; 
+import '../constants.dart';
 
 class DetailScreen extends StatefulWidget {
   final String userName;

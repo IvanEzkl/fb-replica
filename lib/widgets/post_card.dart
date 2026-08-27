@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../constant.dart';
+import '../constants.dart';
 import 'custom_font.dart';
 import '../screens/detail_screen.dart';
 

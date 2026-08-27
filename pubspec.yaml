@@ -11,24 +11,19 @@ dependencies:
   carousel_slider: ^5.1.1
   flutter:
     sdk: flutter
-  # important !
   flutter_screenutil: ^5.9.3
   flutter_spinkit: ^5.2.2
+  http: ^1.2.0
+  shared_preferences: ^2.5.5
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
 
-# important !
 flutter:
   assets:
-    - assets/icons/superpogi.jpg
-    - assets/images/logo.png
-    - assets/images/pogi.jpg
-    - assets/images/bebi.jpg
-    - assets/images/Image.jpg
-    - assets/images/Image1.jpg
-    - assets/images/Image2.jpg
-    - assets/images/Image3.jpg
+    - assets/icons/
+    - assets/images/
   uses-material-design: true

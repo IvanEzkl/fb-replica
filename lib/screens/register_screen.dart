@@ -1,4 +1,4 @@
-import '../constant.dart';
+import '../constants.dart';
 import '/widgets/custom_font.dart';
 import '/widgets/custom_inkwell_button.dart';
 import '/widgets/custom_textformfield.dart';

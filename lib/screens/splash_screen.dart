@@ -1,5 +1,5 @@
 import 'dart:async';
-import '../constant.dart';
+import '../constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -44,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
           children: [
             Image.asset('assets/images/logo.png'),
             SizedBox(height: ScreenUtil().setHeight(120)),
-            SpinKitFadingCube(
+            const SpinKitFadingCube(
               color: FB_DARK_PRIMARY,
               size: 50.0,
             ),

@@ -4,7 +4,7 @@ import '../widgets/custom_font.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/post_card.dart';
 import '../widgets/custom_dialogs.dart';
-import '../constant.dart';
+import '../constants.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String? username;
@@ -464,7 +464,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         vertical: ScreenUtil().setHeight(6),
       ),
       decoration: BoxDecoration(
-        color: FB_DARK_PRIMARY.withOpacity(0.1),
+        color: FB_DARK_PRIMARY.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: FB_DARK_PRIMARY),
       ),

@@ -1,4 +1,4 @@
-import '../constant.dart';
+import '../constants.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -8,7 +8,7 @@ void customDialog(BuildContext context, {required title, required content}) {
     content: Text(content),
     actions: <Widget>[
       ElevatedButton(
-        child: Text('Okay'),
+        child: const Text('Okay'),
         style: ElevatedButton.styleFrom(
           backgroundColor: FB_DARK_PRIMARY,
           foregroundColor: Colors.white,
@@ -116,7 +116,7 @@ void customShowImageDialog(BuildContext context, {required String imageUrl}) {
                   child: Container(
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6),
+                      color: Colors.black.withValues(alpha: 0.6),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(

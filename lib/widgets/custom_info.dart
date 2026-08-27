@@ -96,7 +96,7 @@ class CustomInformation extends StatelessWidget {
                   ),
                   RichText(
                     text: TextSpan(
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.black,
                         fontFamily: 'Frutiger',
                       ),

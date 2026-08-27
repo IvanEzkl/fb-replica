@@ -1,5 +1,5 @@
 import '../widgets/custom_font.dart';
-import '../constant.dart';
+import '../constants.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
