@@ -48,7 +48,7 @@ class _LogInScreenState extends State<LogInScreen> {
           username.contains('regodon') ||
           username.contains('ezekiel')) {
         user = User(
-          id: 1,
+          id: 100,
           username: 'ivan',
           firstName: 'Ivan Ezekiel',
           lastName: 'Regodon',

@@ -30,39 +30,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   List<Post> _userApiPosts = [];
   bool _isLoadingPosts = true;
 
-  late List<Map<String, dynamic>> profilePosts;
-
   @override
   void initState() {
     super.initState();
     _currentUser = widget.user;
-    final userName = widget.user?.fullName ?? widget.username ?? 'Ivan Ezekiel Regodon';
-
-    profilePosts = [
-      {
-        'postId': 1,
-        'userName': userName,
-        'postContent': 'We cute',
-        'date': '2 hours ago',
-        'likes': 45,
-        'comments': 12,
-        'shares': 3,
-        'hasImage': true,
-        'imageUrl': 'assets/images/bebi.jpg',
-      },
-      {
-        'postId': 2,
-        'userName': userName,
-        'postContent': 'First day sa gym, nabawasan ako ng 80 pesos!',
-        'date': '1 day ago',
-        'likes': 32,
-        'comments': 8,
-        'shares': 2,
-        'hasImage': false,
-        'imageUrl': '',
-      },
-    ];
-
     _initUserDataAndPosts();
   }
 
@@ -76,23 +47,171 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     }
 
+    final username = _currentUser?.username.toLowerCase() ?? 'user';
     final userId = _currentUser?.id ?? 1;
 
-    try {
-      final posts = await _postService.getPostsByUserId(userId);
-      if (mounted) {
-        setState(() {
-          _userApiPosts = posts;
-          _isLoadingPosts = false;
-        });
+    // For external dummyjson accounts (e.g. emilys=1, michaelw=2, sophiab=3)
+    if (username != 'ivan' && username != 'user') {
+      try {
+        final posts = await _postService.getPostsByUserId(userId);
+        if (mounted) {
+          setState(() {
+            _userApiPosts = posts;
+            _isLoadingPosts = false;
+          });
+        }
+      } catch (_) {
+        if (mounted) {
+          setState(() {
+            _isLoadingPosts = false;
+          });
+        }
       }
-    } catch (_) {
+    } else {
       if (mounted) {
         setState(() {
           _isLoadingPosts = false;
         });
       }
     }
+  }
+
+  List<Map<String, dynamic>> _getProfilePostsForUser(User? user) {
+    final username = user?.username.toLowerCase() ?? 'user';
+    final displayName = user?.fullName ?? widget.username ?? 'Ivan Ezekiel Regodon';
+    final avatar = user?.image.isNotEmpty == true ? user!.image : 'assets/icons/superpogi.jpg';
+
+    if (username == 'emilys') {
+      return [
+        {
+          'postId': 101,
+          'userName': displayName,
+          'postContent': 'Product sprint complete! So excited for our upcoming launch 🚀',
+          'date': '2 hours ago',
+          'likes': 88,
+          'comments': 14,
+          'shares': 5,
+          'hasImage': true,
+          'imageUrl': 'https://picsum.photos/400/300?random=11',
+          'profileImageUrl': avatar,
+        },
+        {
+          'postId': 102,
+          'userName': displayName,
+          'postContent': 'Loving Flutter & mobile development! Clean architectures make all the difference.',
+          'date': 'Yesterday',
+          'likes': 54,
+          'comments': 7,
+          'shares': 2,
+          'hasImage': false,
+          'imageUrl': '',
+          'profileImageUrl': avatar,
+        },
+        {
+          'postId': 103,
+          'userName': displayName,
+          'postContent': 'Working remotely from London this week. The coffee shops here are amazing ☕🇬🇧',
+          'date': '3 days ago',
+          'likes': 112,
+          'comments': 21,
+          'shares': 8,
+          'hasImage': true,
+          'imageUrl': 'https://picsum.photos/400/300?random=20',
+          'profileImageUrl': avatar,
+        },
+      ];
+    } else if (username == 'michaelw') {
+      return [
+        {
+          'postId': 201,
+          'userName': displayName,
+          'postContent': 'Morning workout session crushed 💪 #HealthyHabits #Fitness',
+          'date': '1 hour ago',
+          'likes': 65,
+          'comments': 10,
+          'shares': 4,
+          'hasImage': true,
+          'imageUrl': 'https://picsum.photos/400/300?random=12',
+          'profileImageUrl': avatar,
+        },
+        {
+          'postId': 202,
+          'userName': displayName,
+          'postContent': 'Meal prep done for the week. High protein, clean nutrition.',
+          'date': 'Yesterday',
+          'likes': 48,
+          'comments': 6,
+          'shares': 1,
+          'hasImage': false,
+          'imageUrl': '',
+          'profileImageUrl': avatar,
+        },
+        {
+          'postId': 203,
+          'userName': displayName,
+          'postContent': 'Active recovery run along Stanford campus 🏃‍♂️🌳',
+          'date': '3 days ago',
+          'likes': 79,
+          'comments': 12,
+          'shares': 5,
+          'hasImage': true,
+          'imageUrl': 'https://picsum.photos/400/300?random=21',
+          'profileImageUrl': avatar,
+        },
+      ];
+    }
+
+    // Default / Ivan Ezekiel Regodon posts
+    return [
+      {
+        'postId': 1,
+        'userName': displayName,
+        'postContent': 'We cute',
+        'date': '2 hours ago',
+        'likes': 45,
+        'comments': 12,
+        'shares': 3,
+        'hasImage': true,
+        'imageUrl': 'assets/images/bebi.jpg',
+        'profileImageUrl': avatar,
+      },
+      {
+        'postId': 2,
+        'userName': displayName,
+        'postContent': 'First day sa gym, nabawasan ako ng 80 pesos!',
+        'date': '1 day ago',
+        'likes': 32,
+        'comments': 8,
+        'shares': 2,
+        'hasImage': false,
+        'imageUrl': '',
+        'profileImageUrl': avatar,
+      },
+      {
+        'postId': 3,
+        'userName': displayName,
+        'postContent': 'Coding all day at National University - Manila. Flutter replica is coming along great! 💻🔥',
+        'date': '2 days ago',
+        'likes': 94,
+        'comments': 18,
+        'shares': 6,
+        'hasImage': true,
+        'imageUrl': 'assets/images/pogi.jpg',
+        'profileImageUrl': avatar,
+      },
+      {
+        'postId': 4,
+        'userName': displayName,
+        'postContent': 'Graduation countdown! Excited to finish my CS degree 🎓',
+        'date': '3 days ago',
+        'likes': 150,
+        'comments': 30,
+        'shares': 10,
+        'hasImage': false,
+        'imageUrl': '',
+        'profileImageUrl': avatar,
+      },
+    ];
   }
 
   Map<String, dynamic> _getProfileDetailsForUser(User? user) {
@@ -247,7 +366,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
 
-    if (_userApiPosts.isNotEmpty) {
+    final username = _currentUser?.username.toLowerCase() ?? 'user';
+
+    // If external user with API posts
+    if (username != 'ivan' && username != 'user' && _userApiPosts.isNotEmpty) {
       return ListView.builder(
         itemCount: _userApiPosts.length,
         itemBuilder: (context, index) {
@@ -263,19 +385,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
             hasImage: false,
             imageUrl: '',
             profileImageUrl: profilePic,
+            currentUserImageUrl: profilePic,
           );
         },
       );
     }
 
-    // Fallback posts if API list is empty or offline
+    final posts = _getProfilePostsForUser(_currentUser);
     return ListView.builder(
-      itemCount: profilePosts.length,
+      itemCount: posts.length,
       itemBuilder: (context, index) {
-        final post = profilePosts[index];
+        final post = posts[index];
         return NewsFeedCard(
           postId: post['postId'] ?? (index + 1),
-          userName: displayName,
+          userName: post['userName'],
           postContent: post['postContent'],
           date: post['date'],
           numOfLikes: post['likes'],
@@ -283,7 +406,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           numOfShares: post['shares'],
           hasImage: post['hasImage'],
           imageUrl: post['imageUrl'] ?? '',
-          profileImageUrl: profilePic,
+          profileImageUrl: post['profileImageUrl'] ?? profilePic,
+          currentUserImageUrl: profilePic,
         );
       },
     );
