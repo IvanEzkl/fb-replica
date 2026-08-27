@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../models/post.dart';
 import '../models/user.dart';
 import '../services/post_service.dart';
@@ -25,8 +26,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final PostService _postService = PostService();
   final UserService _userService = UserService();
 
-  int followers = 1250;
-  int following = 342;
   User? _currentUser;
   List<Post> _userApiPosts = [];
   bool _isLoadingPosts = true;
@@ -69,7 +68,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _initUserDataAndPosts() async {
     if (_currentUser == null) {
-      _currentUser = await _userService.getSavedUser();
+      final user = await _userService.getSavedUser();
+      if (mounted && user != null) {
+        setState(() {
+          _currentUser = user;
+        });
+      }
     }
 
     final userId = _currentUser?.id ?? 1;
@@ -91,26 +95,93 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  final List<String> profilePhotos = [
-    'assets/images/Image.jpg',
-    'assets/images/Image1.jpg',
-    'assets/images/Image2.jpg',
-    'assets/images/Image3.jpg',
-  ];
+  Map<String, dynamic> _getProfileDetailsForUser(User? user) {
+    final username = user?.username.toLowerCase() ?? 'user';
+    final fullName = user?.fullName ?? widget.username ?? 'Ivan Ezekiel Regodon';
 
-  Widget _photos() {
+    if (username == 'emilys') {
+      return {
+        'coverPhoto': 'https://picsum.photos/800/400?random=20',
+        'avatar': user?.image.isNotEmpty == true
+            ? user!.image
+            : 'https://dummyjson.com/icon/emilys/128',
+        'subHeadline': 'University of Oxford • Senior Tech Lead',
+        'bio': 'Passionate product manager & developer. Love building impactful experiences!',
+        'followers': 3420,
+        'following': 512,
+        'profession': 'Senior Product Lead • Mobile Engineer',
+        'location': 'London, United Kingdom',
+        'education': 'University of Oxford, 2018-2022',
+        'skills': ['Product Design', 'Flutter', 'Agile', 'System Architecture'],
+        'description':
+            "Hi! I'm Emily, a Senior Tech Lead at tech ventures. I focus on building intuitive mobile applications and leading dynamic engineering teams.",
+        'photos': [
+          'https://picsum.photos/400/400?random=31',
+          'https://picsum.photos/400/400?random=32',
+          'https://picsum.photos/400/400?random=33',
+          'https://picsum.photos/400/400?random=34',
+        ],
+      };
+    } else if (username == 'michaelw') {
+      return {
+        'coverPhoto': 'https://picsum.photos/800/400?random=21',
+        'avatar': user?.image.isNotEmpty == true
+            ? user!.image
+            : 'https://dummyjson.com/icon/michaelw/128',
+        'subHeadline': 'Stanford University • Fitness & Tech Specialist',
+        'bio': 'Fitness coach and software enthusiast. Staying active and writing clean code.',
+        'followers': 2150,
+        'following': 420,
+        'profession': 'Fitness Specialist • Flutter Enthusiast',
+        'location': 'California, USA',
+        'education': 'Stanford University, 2019-2023',
+        'skills': ['Health Tech', 'Dart', 'UI/UX', 'Cross-Platform'],
+        'description':
+            "Hi! I'm Michael. I bridge fitness and technology through software development, active living, and high-performance engineering.",
+        'photos': [
+          'https://picsum.photos/400/400?random=41',
+          'https://picsum.photos/400/400?random=42',
+          'https://picsum.photos/400/400?random=43',
+          'https://picsum.photos/400/400?random=44',
+        ],
+      };
+    }
+
+    // Default / Ivan Ezekiel Regodon
+    return {
+      'coverPhoto': 'assets/images/pogi.jpg',
+      'avatar': user?.image.isNotEmpty == true
+          ? user!.image
+          : 'assets/icons/superpogi.jpg',
+      'subHeadline': user?.email.isNotEmpty == true
+          ? user!.email
+          : 'National University - Manila',
+      'bio': 'Passionate about coding and innovation',
+      'followers': 1250,
+      'following': 342,
+      'profession': 'Junior Developer • Tech Enthusiast',
+      'location': 'Manila, Philippines',
+      'education': 'National University - Manila, 2023-2027',
+      'skills': ['Flutter', 'Dart', 'FrontEnd', 'REST API'],
+      'description':
+          "Hi! I'm $fullName, a junior developer and tech enthusiast. I love creating beautiful and functional apps that make a difference.",
+      'photos': [
+        'assets/images/Image.jpg',
+        'assets/images/Image1.jpg',
+        'assets/images/Image2.jpg',
+        'assets/images/Image3.jpg',
+      ],
+    };
+  }
+
+  Widget _photos(List<dynamic> photos) {
     return GridView.count(
       primary: false,
       padding: const EdgeInsets.all(20),
       crossAxisSpacing: 10,
       mainAxisSpacing: 10,
       crossAxisCount: 2,
-      children: <Widget>[
-        _buildPhotoCard('assets/images/Image.jpg'),
-        _buildPhotoCard('assets/images/Image1.jpg'),
-        _buildPhotoCard('assets/images/Image2.jpg'),
-        _buildPhotoCard('assets/images/Image3.jpg'),
-      ],
+      children: photos.map((p) => _buildPhotoCard(p.toString())).toList(),
     );
   }
 
@@ -122,37 +193,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Container(
         padding: color != null ? const EdgeInsets.all(8) : null,
         color: color,
-        child: Image.asset(
-          imagePath,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return Container(
-              color: isDark ? Colors.grey[800] : Colors.grey[300],
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
+        child: imagePath.startsWith('http')
+            ? CachedNetworkImage(
+                imageUrl: imagePath,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  color: isDark ? Colors.grey[800] : Colors.grey[300],
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  color: isDark ? Colors.grey[800] : Colors.grey[300],
+                  child: Icon(
                     Icons.image_not_supported,
                     size: 40,
                     color: isDark ? Colors.grey[400] : Colors.grey[600],
                   ),
-                  Text(
-                    'Image not found',
-                    style: TextStyle(
-                      color: isDark ? Colors.grey[400] : Colors.grey,
-                      fontSize: 12,
+                ),
+              )
+            : Image.asset(
+                imagePath,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: isDark ? Colors.grey[800] : Colors.grey[300],
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.image_not_supported,
+                          size: 40,
+                          color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        ),
+                        Text(
+                          'Image not found',
+                          style: TextStyle(
+                            color: isDark ? Colors.grey[400] : Colors.grey,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
+                  );
+                },
               ),
-            );
-          },
-        ),
       ),
     );
   }
 
-  Widget _buildPostsTab() {
+  Widget _buildPostsTab(String displayName, String profilePic) {
     if (_isLoadingPosts) {
       return const Center(
         child: CircularProgressIndicator(color: FB_PRIMARY),
@@ -160,9 +248,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
 
     if (_userApiPosts.isNotEmpty) {
-      final displayName = _currentUser?.fullName ?? widget.username ?? 'Ivan Ezekiel Regodon';
-      final profilePic = _currentUser?.image ?? 'assets/icons/superpogi.jpg';
-
       return ListView.builder(
         itemCount: _userApiPosts.length,
         itemBuilder: (context, index) {
@@ -190,7 +275,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         final post = profilePosts[index];
         return NewsFeedCard(
           postId: post['postId'] ?? (index + 1),
-          userName: post['userName'],
+          userName: displayName,
           postContent: post['postContent'],
           date: post['date'],
           numOfLikes: post['likes'],
@@ -198,7 +283,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           numOfShares: post['shares'],
           hasImage: post['hasImage'],
           imageUrl: post['imageUrl'] ?? '',
-          profileImageUrl: _currentUser?.image ?? 'assets/icons/superpogi.jpg',
+          profileImageUrl: profilePic,
         );
       },
     );
@@ -208,7 +293,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final displayName = _currentUser?.fullName ?? widget.username ?? 'Ivan Ezekiel Regodon';
-    final userImage = _currentUser?.image ?? '';
+    final profile = _getProfileDetailsForUser(_currentUser);
+    final String coverPhoto = profile['coverPhoto'];
+    final String avatarUrl = profile['avatar'];
+    final String subHeadline = profile['subHeadline'];
+    final String bio = profile['bio'];
+    final int followersCount = profile['followers'];
+    final int followingCount = profile['following'];
+    final String profession = profile['profession'];
+    final String location = profile['location'];
+    final String education = profile['education'];
+    final List<dynamic> skills = profile['skills'];
+    final String description = profile['description'];
+    final List<dynamic> photos = profile['photos'];
 
     return DefaultTabController(
       length: 3,
@@ -228,20 +325,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           width: double.infinity,
                           decoration: BoxDecoration(
                             color: isDark ? Colors.grey[800] : Colors.grey[300],
-                            image: const DecorationImage(
-                              image: AssetImage("assets/images/pogi.jpg"),
-                              fit: BoxFit.cover,
-                            ),
+                            image: coverPhoto.startsWith('http')
+                                ? DecorationImage(
+                                    image: NetworkImage(coverPhoto),
+                                    fit: BoxFit.cover,
+                                  )
+                                : DecorationImage(
+                                    image: AssetImage(coverPhoto),
+                                    fit: BoxFit.cover,
+                                  ),
                           ),
                         ),
-                        // Settings Shortcut Button on Cover
+                        // Settings Shortcut Button on Cover Photo
                         Positioned(
                           top: ScreenUtil().setHeight(40),
                           right: ScreenUtil().setWidth(16),
                           child: CircleAvatar(
                             backgroundColor: isDark
-                                ? const Color(0xFF1E1E1E).withValues(alpha: 0.8)
-                                : Colors.white.withValues(alpha: 0.8),
+                                ? const Color(0xFF1E1E1E).withValues(alpha: 0.85)
+                                : Colors.white.withValues(alpha: 0.85),
                             child: IconButton(
                               icon: const Icon(Icons.settings, color: FB_PRIMARY),
                               onPressed: () {
@@ -265,12 +367,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               CircleAvatar(
                                 radius: 50,
                                 backgroundColor: FB_LIGHT_PRIMARY,
-                                backgroundImage: userImage.isNotEmpty &&
-                                        userImage.startsWith('http')
-                                    ? NetworkImage(userImage)
-                                    : const AssetImage(
-                                            "assets/icons/superpogi.jpg")
-                                        as ImageProvider,
+                                backgroundImage: avatarUrl.startsWith('http')
+                                    ? NetworkImage(avatarUrl)
+                                    : AssetImage(avatarUrl) as ImageProvider,
                               ),
                               Positioned(
                                 bottom: 0,
@@ -307,15 +406,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           SizedBox(height: ScreenUtil().setHeight(5)),
                           CustomFont(
-                            text: _currentUser?.email.isNotEmpty == true
-                                ? _currentUser!.email
-                                : 'National University - Manila',
+                            text: subHeadline,
                             fontSize: ScreenUtil().setSp(14),
                             color: isDark ? Colors.grey[400] : Colors.grey[700],
                           ),
                           SizedBox(height: ScreenUtil().setHeight(10)),
                           CustomFont(
-                            text: 'Passionate about coding and innovation',
+                            text: bio,
                             fontSize: ScreenUtil().setSp(14),
                             fontWeight: FontWeight.bold,
                           ),
@@ -334,7 +431,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: Column(
                               children: [
                                 CustomFont(
-                                  text: followers.toString(),
+                                  text: followersCount.toString(),
                                   fontSize: ScreenUtil().setSp(16),
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -350,7 +447,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: Column(
                               children: [
                                 CustomFont(
-                                  text: following.toString(),
+                                  text: followingCount.toString(),
                                   fontSize: ScreenUtil().setSp(16),
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -434,7 +531,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Expanded(
                 child: TabBarView(
                   children: [
-                    _buildPostsTab(),
+                    _buildPostsTab(displayName, avatarUrl),
 
                     SingleChildScrollView(
                       child: Padding(
@@ -466,7 +563,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                   SizedBox(width: ScreenUtil().setWidth(12)),
                                   CustomFont(
-                                    text: 'Junior Developer • Tech Enthusiast',
+                                    text: profession,
                                     fontSize: ScreenUtil().setSp(14),
                                   ),
                                 ],
@@ -489,7 +586,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                   SizedBox(width: ScreenUtil().setWidth(12)),
                                   CustomFont(
-                                    text: 'Manila, Philippines',
+                                    text: location,
                                     fontSize: ScreenUtil().setSp(14),
                                   ),
                                 ],
@@ -513,8 +610,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   SizedBox(width: ScreenUtil().setWidth(12)),
                                   Expanded(
                                     child: CustomFont(
-                                      text:
-                                          'National University - Manila, 2023-2027',
+                                      text: education,
                                       fontSize: ScreenUtil().setSp(14),
                                     ),
                                   ),
@@ -534,12 +630,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             Wrap(
                               spacing: ScreenUtil().setWidth(8),
                               runSpacing: ScreenUtil().setHeight(8),
-                              children: [
-                                _buildSkillChip('Flutter'),
-                                _buildSkillChip('Dart'),
-                                _buildSkillChip('FrontEnd'),
-                                _buildSkillChip('REST API'),
-                              ],
+                              children: skills
+                                  .map((s) => _buildSkillChip(s.toString()))
+                                  .toList(),
                             ),
 
                             SizedBox(height: ScreenUtil().setHeight(20)),
@@ -552,8 +645,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             SizedBox(height: ScreenUtil().setHeight(10)),
                             CustomFont(
-                              text:
-                                  'Hi! I\'m $displayName, a junior developer and tech enthusiast. I love creating beautiful and functional apps that make a difference.',
+                              text: description,
                               fontSize: ScreenUtil().setSp(14),
                               color: isDark ? Colors.grey[300] : Colors.grey[700],
                             ),
@@ -567,7 +659,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
 
-                    _photos(),
+                    _photos(photos),
                   ],
                 ),
               ),

@@ -78,15 +78,6 @@ class _HomeScreenState extends State<HomeScreen> {
           color: FB_PRIMARY,
           fontWeight: FontWeight.bold,
         ),
-        actions: [
-          if (_selectedIndex != 3)
-            IconButton(
-              icon: const Icon(Icons.settings_outlined, color: FB_PRIMARY),
-              onPressed: () {
-                _onTappedBar(3);
-              },
-            ),
-        ],
       ),
       body: PageView(
         controller: _pageController,
@@ -97,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         children: [
           const NewsFeedScreen(),
-          const NotificationScreen(),
+          NotificationScreen(user: _currentUser),
           ProfileScreen(
             user: _currentUser,
             username: _currentUser?.fullName ?? widget.username,

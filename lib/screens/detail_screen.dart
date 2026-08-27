@@ -16,6 +16,8 @@ class DetailScreen extends StatefulWidget {
   final int initialNumOfLikes;
   final String imageUrl;
   final String profileImageUrl;
+  final String? initialCommentAuthor;
+  final String? initialCommentText;
 
   const DetailScreen({
     super.key,
@@ -26,6 +28,8 @@ class DetailScreen extends StatefulWidget {
     required this.date,
     this.imageUrl = '',
     this.profileImageUrl = '',
+    this.initialCommentAuthor,
+    this.initialCommentText,
   });
 
   @override
@@ -73,14 +77,46 @@ class _DetailScreenState extends State<DetailScreen> {
       if (mounted) {
         setState(() {
           _comments = comments;
+          _insertInitialCommentIfNeeded();
           _isLoadingComments = false;
         });
       }
     } catch (_) {
       if (mounted) {
         setState(() {
+          _insertInitialCommentIfNeeded();
           _isLoadingComments = false;
         });
+      }
+    }
+  }
+
+  void _insertInitialCommentIfNeeded() {
+    if (widget.initialCommentAuthor != null &&
+        widget.initialCommentAuthor!.isNotEmpty &&
+        widget.initialCommentText != null &&
+        widget.initialCommentText!.isNotEmpty) {
+      // Check if already in the list
+      final exists = _comments.any((c) =>
+          c.user.fullName == widget.initialCommentAuthor &&
+          c.body == widget.initialCommentText);
+      if (!exists) {
+        _comments.insert(
+          0,
+          Comment(
+            id: DateTime.now().millisecondsSinceEpoch,
+            body: widget.initialCommentText!,
+            postId: widget.postId,
+            likes: 1,
+            user: CommentUser(
+              id: 999,
+              username: widget.initialCommentAuthor!
+                  .toLowerCase()
+                  .replaceAll(' ', '_'),
+              fullName: widget.initialCommentAuthor!,
+            ),
+          ),
+        );
       }
     }
   }
@@ -463,7 +499,7 @@ class _DetailScreenState extends State<DetailScreen> {
             ),
           ),
 
-          // Add Comment Input Bar (Enhancement 3)
+          // Add Comment Input Bar
           Container(
             padding: EdgeInsets.symmetric(
               horizontal: ScreenUtil().setWidth(12),

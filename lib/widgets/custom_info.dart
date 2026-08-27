@@ -61,13 +61,15 @@ class CustomInformation extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => DetailScreen(
                   userName: userName.isNotEmpty ? userName : name,
-                  postContent: commentText.isNotEmpty
-                      ? commentText
-                      : (postContent.isNotEmpty ? postContent : description),
-                  date: postDate.isNotEmpty ? postDate : (date.isNotEmpty ? date : 'Recently'),
-                  initialNumOfLikes: postLikes > 0 ? postLikes : numOfLikes,
+                  postContent: postContent.isNotEmpty
+                      ? postContent
+                      : (commentText.isNotEmpty ? 'Check out my latest post!' : description),
+                  date: postDate.isNotEmpty ? postDate : (date.isNotEmpty ? date : '2 hours ago'),
+                  initialNumOfLikes: postLikes > 0 ? postLikes : (numOfLikes > 0 ? numOfLikes : 45),
                   imageUrl: imageUrl,
                   profileImageUrl: profileImageUrl,
+                  initialCommentAuthor: commentText.isNotEmpty ? name : null,
+                  initialCommentText: commentText.isNotEmpty ? commentText : null,
                 ),
               ),
             );
@@ -89,7 +91,9 @@ class CustomInformation extends StatelessWidget {
                 : CircleAvatar(
                     radius: ScreenUtil().setSp(20),
                     backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
-                    backgroundImage: AssetImage(profileImageUrl),
+                    backgroundImage: profileImageUrl.startsWith('http')
+                        ? NetworkImage(profileImageUrl)
+                        : AssetImage(profileImageUrl) as ImageProvider,
                     onBackgroundImageError: (exception, stackTrace) {
                       print("Error loading profile image: $profileImageUrl");
                     },
