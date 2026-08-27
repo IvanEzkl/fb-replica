@@ -36,10 +36,40 @@ class _LogInScreenState extends State<LogInScreen> {
         user = User(
           id: 1,
           username: 'user',
-          firstName: 'Default',
-          lastName: 'User',
-          email: 'user@facebook.com',
+          firstName: 'Ivan Ezekiel',
+          lastName: 'Regodon',
+          email: 'ivan@national-u.edu.ph',
           image: 'assets/icons/superpogi.jpg',
+        );
+        await _userService.saveUserSession(user);
+      } else if (username == 'ivan' && (password == 'ivan123' || password == 'password')) {
+        user = User(
+          id: 1,
+          username: 'ivan',
+          firstName: 'Ivan Ezekiel',
+          lastName: 'Regodon',
+          email: 'ivan@national-u.edu.ph',
+          image: 'assets/icons/superpogi.jpg',
+        );
+        await _userService.saveUserSession(user);
+      } else if (username == 'admin' && (password == 'admin123' || password == 'admin')) {
+        user = User(
+          id: 99,
+          username: 'admin',
+          firstName: 'System',
+          lastName: 'Administrator',
+          email: 'admin@facebook.com',
+          image: 'https://i.pravatar.cc/150?img=68',
+        );
+        await _userService.saveUserSession(user);
+      } else if (username == 'test' && (password == 'test123' || password == 'test')) {
+        user = User(
+          id: 88,
+          username: 'test',
+          firstName: 'Test',
+          lastName: 'User',
+          email: 'test@facebook.com',
+          image: 'https://i.pravatar.cc/150?img=12',
         );
         await _userService.saveUserSession(user);
       } else {
