@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../constants.dart';
+import '../models/user.dart';
+import '../services/user_service.dart';
 import '../screens/newsfeed_screen.dart';
 import '../screens/notification_screen.dart';
 import '../screens/profile_screen.dart';
+import '../screens/settings_screen.dart';
 import '../widgets/custom_font.dart';
 
 class HomeScreen extends StatefulWidget {
   final String? username;
-  const HomeScreen({super.key, this.username});
+  final User? user;
+
+  const HomeScreen({super.key, this.username, this.user});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -16,19 +21,46 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
-  final _pageController = PageController();
+  final PageController _pageController = PageController();
+  final UserService _userService = UserService();
+  User? _currentUser;
 
-  late final List<String> _titles;
+  late List<String> _titles;
 
   @override
   void initState() {
     super.initState();
+    _currentUser = widget.user;
+    _updateTitles();
+    if (_currentUser == null) {
+      _loadUser();
+    }
+  }
+
+  void _updateTitles() {
+    final name = _currentUser?.fullName ?? widget.username ?? 'Profile';
     _titles = [
-      'Friendster', 
+      'Facebook',
       'Notifications',
-      widget.username ?? 'Profile', 
-      'Menu',
+      name,
+      'Settings',
     ];
+  }
+
+  Future<void> _loadUser() async {
+    final user = await _userService.getSavedUser();
+    if (mounted && user != null) {
+      setState(() {
+        _currentUser = user;
+        _updateTitles();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -39,11 +71,20 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 1,
         backgroundColor: Colors.white,
         title: CustomFont(
-          text: _titles[_selectedIndex], // Dynamic Title
-          fontSize: ScreenUtil().setSp(25),
+          text: _titles[_selectedIndex],
+          fontSize: ScreenUtil().setSp(22),
           color: FB_PRIMARY,
           fontWeight: FontWeight.bold,
         ),
+        actions: [
+          if (_selectedIndex != 3)
+            IconButton(
+              icon: const Icon(Icons.settings_outlined, color: FB_PRIMARY),
+              onPressed: () {
+                _onTappedBar(3);
+              },
+            ),
+        ],
       ),
       body: PageView(
         controller: _pageController,
@@ -55,18 +96,20 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           const NewsFeedScreen(),
           const NotificationScreen(),
-          ProfileScreen(username: widget.username),
-          Center(
-            child: Text("Menu Placeholder", style: TextStyle(fontSize: 20.sp)),
+          ProfileScreen(
+            user: _currentUser,
+            username: _currentUser?.fullName ?? widget.username,
           ),
+          SettingsScreen(user: _currentUser),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         showSelectedLabels: false,
         showUnselectedLabels: false,
         onTap: _onTappedBar,
-        type: BottomNavigationBarType.fixed, 
+        type: BottomNavigationBarType.fixed,
         selectedItemColor: FB_PRIMARY,
+        unselectedItemColor: Colors.grey,
         currentIndex: _selectedIndex,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
@@ -74,8 +117,8 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.notifications),
             label: 'Notifications',
           ),
-          
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
         ],
       ),
     );

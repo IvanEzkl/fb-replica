@@ -1,8 +1,10 @@
 import 'dart:async';
-import '../constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import '../constants.dart';
+import '../services/user_service.dart';
+import 'home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -12,17 +14,32 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final UserService _userService = UserService();
+
   @override
   void initState() {
-    getIsLogin();
     super.initState();
+    getIsLogin();
   }
 
   void getIsLogin() {
-    Timer(
-      const Duration(seconds: 4),
-      () => Navigator.popAndPushNamed(context, '/login'),
-    );
+    Timer(const Duration(seconds: 3), () async {
+      if (!mounted) return;
+      final bool loggedIn = await _userService.isLoggedIn();
+      final user = await _userService.getSavedUser();
+
+      if (!mounted) return;
+      if (loggedIn && user != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomeScreen(user: user, username: user.fullName),
+          ),
+        );
+      } else {
+        Navigator.popAndPushNamed(context, '/login');
+      }
+    });
   }
 
   @override

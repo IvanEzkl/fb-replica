@@ -1,9 +1,11 @@
-import '/widgets/custom_textformfield.dart';
-import '/widgets/custom_dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../constants.dart';
+import '../models/user.dart';
+import '../services/user_service.dart';
+import '../widgets/custom_dialogs.dart';
 import '../widgets/custom_inkwell_button.dart';
+import '../widgets/custom_textformfield.dart';
 import 'home_screen.dart';
 
 class LogInScreen extends StatefulWidget {
@@ -14,25 +16,56 @@ class LogInScreen extends StatefulWidget {
 }
 
 class _LogInScreenState extends State<LogInScreen> {
-  TextEditingController usernameController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final UserService _userService = UserService();
+  bool _isLoading = false;
 
-  void login() {
-    if (usernameController.text == 'user' &&
-        passwordController.text == 'user') {
+  Future<void> login() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final username = usernameController.text.trim();
+    final password = passwordController.text.trim();
+
+    try {
+      User user;
+      if (username == 'user' && password == 'user') {
+        user = User(
+          id: 1,
+          username: 'user',
+          firstName: 'Default',
+          lastName: 'User',
+          email: 'user@facebook.com',
+          image: 'assets/icons/superpogi.jpg',
+        );
+        await _userService.saveUserSession(user);
+      } else {
+        user = await _userService.login(username, password);
+      }
+
+      if (!mounted) return;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (build) => HomeScreen(username: usernameController.text),
+          builder: (context) => HomeScreen(user: user, username: user.fullName),
         ),
       );
-    } else {
+    } catch (e) {
+      if (!mounted) return;
       customDialog(
         context,
-        title: 'Error',
-        content: 'Username and password does not matched!',
+        title: 'Authentication Failed',
+        content: e.toString().replaceAll('Exception: ', ''),
       );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -69,11 +102,10 @@ class _LogInScreenState extends State<LogInScreen> {
                         validator: (value) =>
                             value!.isEmpty ? 'Enter your username' : null,
                         onSaved: (value) => usernameController.text = value!,
-
                         fontSize: ScreenUtil().setSp(15),
                         fontColor: FB_PRIMARY,
                         hintTextSize: ScreenUtil().setSp(15),
-                        hintText: 'Username',
+                        hintText: 'Username (e.g. emilys / user)',
                       ),
                       SizedBox(height: ScreenUtil().setHeight(10)),
                       CustomTextFormField(
@@ -84,25 +116,30 @@ class _LogInScreenState extends State<LogInScreen> {
                         validator: (value) =>
                             value!.isEmpty ? 'Enter your password' : null,
                         onSaved: (value) => passwordController.text = value!,
-
                         fontSize: ScreenUtil().setSp(15),
                         fontColor: FB_PRIMARY,
                         hintTextSize: ScreenUtil().setSp(15),
-                        hintText: 'Password',
+                        hintText: 'Password (e.g. emilyspass / user)',
                       ),
                       SizedBox(height: ScreenUtil().setHeight(50)),
-                      CustomInkWellButton(
-                        onTap: () {
-                          if (_formKey.currentState!.validate()) {
-                            _formKey.currentState!.save();
-                            login();
-                          }
-                        },
-                        height: ScreenUtil().setHeight(40),
-                        width: ScreenUtil().screenWidth,
-                        buttonName: 'Login',
-                        fontSize: ScreenUtil().setSp(15),
-                      ),
+                      _isLoading
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                color: FB_PRIMARY,
+                              ),
+                            )
+                          : CustomInkWellButton(
+                              onTap: () {
+                                if (_formKey.currentState!.validate()) {
+                                  _formKey.currentState!.save();
+                                  login();
+                                }
+                              },
+                              height: ScreenUtil().setHeight(40),
+                              width: ScreenUtil().screenWidth,
+                              buttonName: 'Login',
+                              fontSize: ScreenUtil().setSp(15),
+                            ),
                     ],
                   ),
                 ),
