@@ -65,11 +65,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final navBarBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+
     return Scaffold(
       appBar: AppBar(
-        shadowColor: FB_TEXT_COLOR_WHITE,
         elevation: 1,
-        backgroundColor: Colors.white,
+        backgroundColor: navBarBg,
         title: CustomFont(
           text: _titles[_selectedIndex],
           fontSize: ScreenUtil().setSp(22),
@@ -104,6 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: navBarBg,
         showSelectedLabels: false,
         showUnselectedLabels: false,
         onTap: _onTappedBar,

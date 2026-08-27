@@ -3,33 +3,33 @@ import '../constants.dart';
 import 'package:flutter/material.dart';
 
 class CustomTextFormField extends StatefulWidget {
-  CustomTextFormField({
+  const CustomTextFormField({
     super.key,
     required this.validator,
     required this.onSaved,
-    this.controller = TextEditingController,
+    this.controller,
     this.isObscure = false,
     required this.fontSize,
-    required this.fontColor,
+    this.fontColor,
     this.hintTextSize = 12,
     this.hintText = '',
-    this.fillColor = Colors.black12,
+    this.fillColor,
     required this.height,
     required this.width,
     this.keyboardType = TextInputType.text,
     this.maxLength = 200,
   });
 
-  final validator;
-  final onSaved;
-  final controller;
+  final FormFieldValidator<String>? validator;
+  final FormFieldSetter<String>? onSaved;
+  final TextEditingController? controller;
   final bool isObscure;
-  final fontSize;
-  final fontColor;
+  final double fontSize;
+  final Color? fontColor;
   final double height, width;
-  final hintTextSize;
-  final hintText;
-  final fillColor;
+  final double hintTextSize;
+  final String hintText;
+  final Color? fillColor;
   final TextInputType keyboardType;
   final int maxLength;
 
@@ -46,7 +46,12 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     _obscureText = widget.isObscure;
   }
 
+  @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final effectiveTextColor = widget.fontColor ?? (isDark ? Colors.white : Colors.black);
+    final effectiveFillColor = widget.fillColor ?? (isDark ? const Color(0xFF222222) : Colors.black12);
+
     return TextFormField(
       validator: widget.validator,
       onSaved: widget.onSaved,
@@ -54,7 +59,11 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       obscureText: _obscureText,
       keyboardType: widget.keyboardType,
       inputFormatters: [LengthLimitingTextInputFormatter(widget.maxLength)],
-      style: TextStyle(fontSize: widget.fontSize, color: widget.fontColor),
+      style: TextStyle(
+        fontSize: widget.fontSize,
+        color: effectiveTextColor,
+        fontFamily: 'Frutiger',
+      ),
       decoration: InputDecoration(
         contentPadding: EdgeInsets.fromLTRB(
           widget.width,
@@ -72,21 +81,24 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                 },
                 icon: Icon(
                   _obscureText ? Icons.visibility : Icons.visibility_off,
-                  color: FB_DARK_PRIMARY,
+                  color: isDark ? FB_LIGHT_PRIMARY : FB_DARK_PRIMARY,
                 ),
               )
             : null,
-        enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: FB_DARK_PRIMARY, width: 2),
-          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: isDark ? FB_SECONDARY : FB_DARK_PRIMARY,
+            width: 1.5,
+          ),
+          borderRadius: const BorderRadius.all(Radius.circular(10.0)),
         ),
         errorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 2),
+          borderSide: BorderSide(color: Colors.red, width: 1.5),
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
         ),
         errorStyle: const TextStyle(fontFamily: 'Frutiger'),
         focusedErrorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 2),
+          borderSide: BorderSide(color: Colors.red, width: 1.5),
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
         ),
         focusedBorder: const OutlineInputBorder(
@@ -95,12 +107,12 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         ),
         filled: true,
         hintStyle: TextStyle(
-          color: Colors.black12,
+          color: isDark ? Colors.grey[500] : Colors.black38,
           fontSize: widget.hintTextSize,
           fontFamily: 'Frutiger',
         ),
         hintText: widget.hintText,
-        fillColor: widget.fillColor,
+        fillColor: effectiveFillColor,
       ),
     );
   }

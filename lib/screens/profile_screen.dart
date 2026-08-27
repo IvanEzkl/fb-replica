@@ -91,7 +91,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  // Sample images for GridView
   final List<String> profilePhotos = [
     'assets/images/Image.jpg',
     'assets/images/Image1.jpg',
@@ -116,6 +115,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildPhotoCard(String imagePath, {Color? color}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return GestureDetector(
       onTap: () => customShowImageDialog(context, imageUrl: imagePath),
       child: Container(
@@ -126,18 +127,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
             return Container(
-              color: Colors.grey[300],
+              color: isDark ? Colors.grey[800] : Colors.grey[300],
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
                     Icons.image_not_supported,
                     size: 40,
-                    color: Colors.grey[600],
+                    color: isDark ? Colors.grey[400] : Colors.grey[600],
                   ),
-                  const Text(
+                  Text(
                     'Image not found',
-                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                    style: TextStyle(
+                      color: isDark ? Colors.grey[400] : Colors.grey,
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ),
@@ -202,6 +206,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final displayName = _currentUser?.fullName ?? widget.username ?? 'Ivan Ezekiel Regodon';
     final userImage = _currentUser?.image ?? '';
 
@@ -222,7 +227,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           height: 200,
                           width: double.infinity,
                           decoration: BoxDecoration(
-                            color: Colors.grey[300],
+                            color: isDark ? Colors.grey[800] : Colors.grey[300],
                             image: const DecorationImage(
                               image: AssetImage("assets/images/pogi.jpg"),
                               fit: BoxFit.cover,
@@ -234,9 +239,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           top: ScreenUtil().setHeight(40),
                           right: ScreenUtil().setWidth(16),
                           child: CircleAvatar(
-                            backgroundColor: Colors.white.withValues(alpha: 0.8),
+                            backgroundColor: isDark
+                                ? const Color(0xFF1E1E1E).withValues(alpha: 0.8)
+                                : Colors.white.withValues(alpha: 0.8),
                             child: IconButton(
-                              icon: const Icon(Icons.settings, color: FB_DARK_PRIMARY),
+                              icon: const Icon(Icons.settings, color: FB_PRIMARY),
                               onPressed: () {
                                 Navigator.push(
                                   context,
@@ -270,11 +277,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 right: 0,
                                 child: CircleAvatar(
                                   radius: 15,
-                                  backgroundColor: Colors.grey[300],
-                                  child: const Icon(
+                                  backgroundColor:
+                                      isDark ? Colors.grey[700] : Colors.grey[300],
+                                  child: Icon(
                                     Icons.camera_alt,
                                     size: 16,
-                                    color: Colors.black,
+                                    color: isDark ? Colors.white : Colors.black,
                                   ),
                                 ),
                               ),
@@ -296,7 +304,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             text: displayName,
                             fontWeight: FontWeight.bold,
                             fontSize: ScreenUtil().setSp(20),
-                            color: Colors.black,
                           ),
                           SizedBox(height: ScreenUtil().setHeight(5)),
                           CustomFont(
@@ -304,13 +311,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ? _currentUser!.email
                                 : 'National University - Manila',
                             fontSize: ScreenUtil().setSp(14),
-                            color: Colors.grey[700]!,
+                            color: isDark ? Colors.grey[400] : Colors.grey[700],
                           ),
                           SizedBox(height: ScreenUtil().setHeight(10)),
                           CustomFont(
                             text: 'Passionate about coding and innovation',
                             fontSize: ScreenUtil().setSp(14),
-                            color: Colors.black,
                             fontWeight: FontWeight.bold,
                           ),
                         ],
@@ -330,7 +336,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 CustomFont(
                                   text: followers.toString(),
                                   fontSize: ScreenUtil().setSp(16),
-                                  color: Colors.black,
                                   fontWeight: FontWeight.bold,
                                 ),
                                 CustomFont(
@@ -347,7 +352,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 CustomFont(
                                   text: following.toString(),
                                   fontSize: ScreenUtil().setSp(16),
-                                  color: Colors.black,
                                   fontWeight: FontWeight.bold,
                                 ),
                                 CustomFont(
@@ -404,26 +408,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               TabBar(
                 indicatorColor: FB_DARK_PRIMARY,
+                labelColor: FB_PRIMARY,
+                unselectedLabelColor: isDark ? Colors.grey[400] : Colors.grey[700],
                 tabs: [
                   Tab(
                     child: CustomFont(
                       text: 'Posts',
                       fontSize: ScreenUtil().setSp(15),
-                      color: Colors.black,
                     ),
                   ),
                   Tab(
                     child: CustomFont(
                       text: 'About',
                       fontSize: ScreenUtil().setSp(15),
-                      color: Colors.black,
                     ),
                   ),
                   Tab(
                     child: CustomFont(
                       text: 'Photos',
                       fontSize: ScreenUtil().setSp(15),
-                      color: Colors.black,
                     ),
                   ),
                 ],
@@ -443,7 +446,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             CustomFont(
                               text: 'Details',
                               fontSize: ScreenUtil().setSp(18),
-                              color: Colors.black,
                               fontWeight: FontWeight.bold,
                             ),
                             SizedBox(height: ScreenUtil().setHeight(15)),
@@ -457,14 +459,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 children: [
                                   Icon(
                                     Icons.work,
-                                    color: Colors.grey[600],
+                                    color: isDark
+                                        ? Colors.grey[400]
+                                        : Colors.grey[600],
                                     size: ScreenUtil().setSp(20),
                                   ),
                                   SizedBox(width: ScreenUtil().setWidth(12)),
                                   CustomFont(
                                     text: 'Junior Developer • Tech Enthusiast',
                                     fontSize: ScreenUtil().setSp(14),
-                                    color: Colors.black,
                                   ),
                                 ],
                               ),
@@ -479,14 +482,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 children: [
                                   Icon(
                                     Icons.location_on,
-                                    color: Colors.grey[600],
+                                    color: isDark
+                                        ? Colors.grey[400]
+                                        : Colors.grey[600],
                                     size: ScreenUtil().setSp(20),
                                   ),
                                   SizedBox(width: ScreenUtil().setWidth(12)),
                                   CustomFont(
                                     text: 'Manila, Philippines',
                                     fontSize: ScreenUtil().setSp(14),
-                                    color: Colors.black,
                                   ),
                                 ],
                               ),
@@ -501,7 +505,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 children: [
                                   Icon(
                                     Icons.school,
-                                    color: Colors.grey[600],
+                                    color: isDark
+                                        ? Colors.grey[400]
+                                        : Colors.grey[600],
                                     size: ScreenUtil().setSp(20),
                                   ),
                                   SizedBox(width: ScreenUtil().setWidth(12)),
@@ -510,7 +516,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       text:
                                           'National University - Manila, 2023-2027',
                                       fontSize: ScreenUtil().setSp(14),
-                                      color: Colors.black,
                                     ),
                                   ),
                                 ],
@@ -523,7 +528,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             CustomFont(
                               text: 'Skills',
                               fontSize: ScreenUtil().setSp(16),
-                              color: Colors.black,
                               fontWeight: FontWeight.bold,
                             ),
                             SizedBox(height: ScreenUtil().setHeight(10)),
@@ -544,7 +548,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             CustomFont(
                               text: 'Description',
                               fontSize: ScreenUtil().setSp(18),
-                              color: Colors.black,
                               fontWeight: FontWeight.bold,
                             ),
                             SizedBox(height: ScreenUtil().setHeight(10)),
@@ -552,7 +555,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               text:
                                   'Hi! I\'m $displayName, a junior developer and tech enthusiast. I love creating beautiful and functional apps that make a difference.',
                               fontSize: ScreenUtil().setSp(14),
-                              color: Colors.grey[700] ?? Colors.grey,
+                              color: isDark ? Colors.grey[300] : Colors.grey[700],
                             ),
                             SizedBox(height: ScreenUtil().setHeight(15)),
                             CustomButton(
@@ -576,20 +579,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildSkillChip(String skill) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: ScreenUtil().setWidth(12),
         vertical: ScreenUtil().setHeight(6),
       ),
       decoration: BoxDecoration(
-        color: FB_DARK_PRIMARY.withValues(alpha: 0.1),
+        color: isDark
+            ? FB_PRIMARY.withValues(alpha: 0.2)
+            : FB_DARK_PRIMARY.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: FB_DARK_PRIMARY),
+        border: Border.all(
+          color: isDark ? FB_LIGHT_PRIMARY : FB_DARK_PRIMARY,
+        ),
       ),
       child: CustomFont(
         text: skill,
         fontSize: ScreenUtil().setSp(12),
-        color: FB_DARK_PRIMARY,
+        color: isDark ? FB_LIGHT_PRIMARY : FB_DARK_PRIMARY,
       ),
     );
   }

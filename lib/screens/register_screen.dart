@@ -95,12 +95,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Container(
           height: ScreenUtil().screenHeight,
           width: ScreenUtil().screenWidth,
-          color: Colors.white,
           padding: EdgeInsets.fromLTRB(
             ScreenUtil().setWidth(25),
             ScreenUtil().setHeight(40),
@@ -193,9 +191,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'You have an account? ',
+                    'Already have an account? ',
                     style: TextStyle(
-                      color: Colors.black45,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white70
+                          : Colors.black54,
                       fontSize: ScreenUtil().setSp(15),
                     ),
                   ),

@@ -78,11 +78,13 @@ class _NewsFeedCardState extends State<NewsFeedCard> {
       return const SizedBox.shrink();
     }
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       width: double.infinity,
       height: ScreenUtil().setHeight(200),
       decoration: BoxDecoration(
-        color: Colors.grey[200],
+        color: isDark ? Colors.grey[900] : Colors.grey[200],
         borderRadius: BorderRadius.circular(8),
       ),
       child: widget.imageUrl.startsWith('http')
@@ -116,9 +118,15 @@ class _NewsFeedCardState extends State<NewsFeedCard> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final commentBarBg = isDark ? const Color(0xFF2A2A2A) : Colors.grey[200];
+
     return InkWell(
       onTap: _navigateToDetail,
       child: Card(
+        color: cardBg,
+        elevation: isDark ? 0.5 : 1,
         margin: EdgeInsets.all(ScreenUtil().setSp(10)),
         child: Padding(
           padding: EdgeInsets.all(ScreenUtil().setSp(10)),
@@ -131,7 +139,8 @@ class _NewsFeedCardState extends State<NewsFeedCard> {
                   widget.profileImageUrl.isNotEmpty &&
                           widget.profileImageUrl.startsWith('http')
                       ? CircleAvatar(
-                          backgroundColor: Colors.grey[300],
+                          backgroundColor:
+                              isDark ? Colors.grey[800] : Colors.grey[300],
                           radius: ScreenUtil().setSp(20),
                           child: ClipOval(
                             child: CachedNetworkImage(
@@ -153,7 +162,8 @@ class _NewsFeedCardState extends State<NewsFeedCard> {
                           ),
                         )
                       : CircleAvatar(
-                          backgroundColor: Colors.grey[300],
+                          backgroundColor:
+                              isDark ? Colors.grey[800] : Colors.grey[300],
                           radius: ScreenUtil().setSp(20),
                           backgroundImage: widget.profileImageUrl.isNotEmpty
                               ? AssetImage(widget.profileImageUrl)
@@ -162,7 +172,9 @@ class _NewsFeedCardState extends State<NewsFeedCard> {
                           child: widget.profileImageUrl.isEmpty
                               ? Icon(
                                   Icons.person,
-                                  color: Colors.white,
+                                  color: isDark
+                                      ? Colors.white70
+                                      : Colors.white,
                                   size: ScreenUtil().setSp(25),
                                 )
                               : null,
@@ -174,7 +186,6 @@ class _NewsFeedCardState extends State<NewsFeedCard> {
                       CustomFont(
                         text: widget.userName,
                         fontSize: ScreenUtil().setSp(15),
-                        color: Colors.black,
                         fontWeight: FontWeight.bold,
                       ),
                       Row(
@@ -202,7 +213,6 @@ class _NewsFeedCardState extends State<NewsFeedCard> {
               CustomFont(
                 text: widget.postContent,
                 fontSize: ScreenUtil().setSp(13),
-                color: Colors.black,
               ),
               SizedBox(height: ScreenUtil().setHeight(8)),
               _buildPostImage(),
@@ -262,7 +272,8 @@ class _NewsFeedCardState extends State<NewsFeedCard> {
                   widget.profileImageUrl.isNotEmpty &&
                           widget.profileImageUrl.startsWith('http')
                       ? CircleAvatar(
-                          backgroundColor: Colors.grey[300],
+                          backgroundColor:
+                              isDark ? Colors.grey[800] : Colors.grey[300],
                           radius: ScreenUtil().setSp(15),
                           child: ClipOval(
                             child: CachedNetworkImage(
@@ -284,7 +295,8 @@ class _NewsFeedCardState extends State<NewsFeedCard> {
                           ),
                         )
                       : CircleAvatar(
-                          backgroundColor: Colors.grey[300],
+                          backgroundColor:
+                              isDark ? Colors.grey[800] : Colors.grey[300],
                           radius: ScreenUtil().setSp(15),
                           backgroundImage: widget.profileImageUrl.isNotEmpty
                               ? AssetImage(widget.profileImageUrl)
@@ -293,7 +305,9 @@ class _NewsFeedCardState extends State<NewsFeedCard> {
                           child: widget.profileImageUrl.isEmpty
                               ? Icon(
                                   Icons.person,
-                                  color: Colors.white,
+                                  color: isDark
+                                      ? Colors.white70
+                                      : Colors.white,
                                   size: ScreenUtil().setSp(20),
                                 )
                               : null,
@@ -309,7 +323,7 @@ class _NewsFeedCardState extends State<NewsFeedCard> {
                         ),
                         alignment: Alignment.centerLeft,
                         decoration: BoxDecoration(
-                          color: Colors.grey[200],
+                          color: commentBarBg,
                           borderRadius: BorderRadius.all(
                             Radius.circular(ScreenUtil().setSp(10)),
                           ),

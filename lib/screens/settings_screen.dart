@@ -48,10 +48,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: cardBg,
         elevation: 1,
         title: CustomFont(
           text: 'Settings & Preferences',
@@ -59,7 +61,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           color: FB_PRIMARY,
           fontWeight: FontWeight.bold,
         ),
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -72,9 +74,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Container(
                   padding: EdgeInsets.all(ScreenUtil().setSp(14)),
                   decoration: BoxDecoration(
-                    color: FB_LIGHT_PRIMARY.withValues(alpha: 0.3),
+                    color: isDark
+                        ? const Color(0xFF222222)
+                        : FB_LIGHT_PRIMARY.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: FB_LIGHT_PRIMARY),
+                    border: Border.all(
+                      color: isDark ? Colors.grey[800]! : FB_LIGHT_PRIMARY,
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -87,8 +93,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             : null,
                         child: _currentUser!.image.isEmpty ||
                                 !_currentUser!.image.startsWith('http')
-                            ? Icon(Icons.person,
-                                color: Colors.white, size: ScreenUtil().setSp(26))
+                            ? Icon(
+                                Icons.person,
+                                color: Colors.white,
+                                size: ScreenUtil().setSp(26),
+                              )
                             : null,
                       ),
                       SizedBox(width: ScreenUtil().setWidth(12)),
@@ -100,20 +109,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               text: _currentUser!.fullName,
                               fontSize: ScreenUtil().setSp(16),
                               fontWeight: FontWeight.bold,
-                              color: Colors.black,
                             ),
                             SizedBox(height: ScreenUtil().setHeight(3)),
                             CustomFont(
                               text: '@${_currentUser!.username}',
                               fontSize: ScreenUtil().setSp(13),
-                              color: Colors.grey[700]!,
+                              color: isDark ? Colors.grey[400] : Colors.grey[700],
                             ),
                             if (_currentUser!.email.isNotEmpty) ...[
                               SizedBox(height: ScreenUtil().setHeight(2)),
                               CustomFont(
                                 text: _currentUser!.email,
                                 fontSize: ScreenUtil().setSp(12),
-                                color: Colors.grey[600]!,
+                                color: isDark ? Colors.grey[500] : Colors.grey[600],
                               ),
                             ],
                           ],
@@ -129,11 +137,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 text: 'User Preferences',
                 fontSize: ScreenUtil().setSp(16),
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
               ),
               SizedBox(height: ScreenUtil().setHeight(10)),
 
               Card(
+                color: cardBg,
                 elevation: 0.5,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -146,7 +154,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       title: CustomFont(
                         text: 'Dark Mode',
                         fontSize: ScreenUtil().setSp(14),
-                        color: Colors.black,
                       ),
                       subtitle: CustomFont(
                         text: 'Toggle application dark theme',
@@ -166,7 +173,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       title: CustomFont(
                         text: 'Push Notifications',
                         fontSize: ScreenUtil().setSp(14),
-                        color: Colors.black,
                       ),
                       subtitle: CustomFont(
                         text: 'Receive alerts on likes and comments',

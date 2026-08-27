@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../constants.dart';
 import 'custom_font.dart';
 
-// ignore: must_be_immutable
 class CustomButton extends StatefulWidget {
-  late String buttonType, buttonName;
-  late Color fontColor, outlineColor;
-  late dynamic onPressed;
+  final String buttonType;
+  final String buttonName;
+  final Color? fontColor;
+  final Color? outlineColor;
+  final VoidCallback onPressed;
 
-  CustomButton({
+  const CustomButton({
     super.key,
     this.buttonType = 'elevated',
     required this.buttonName,
-    this.fontColor = Colors.black,
+    this.fontColor,
     required this.onPressed,
-    this.outlineColor = Colors.black,
+    this.outlineColor,
   });
 
   @override
@@ -24,23 +26,29 @@ class CustomButton extends StatefulWidget {
 class _CustomButtonState extends State<CustomButton> {
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     if (widget.buttonType == 'outlined') {
+      final borderCol = widget.outlineColor ?? (isDark ? FB_LIGHT_PRIMARY : FB_DARK_PRIMARY);
+      final textCol = widget.fontColor ?? (isDark ? Colors.white : FB_DARK_PRIMARY);
+
       return OutlinedButton(
         onPressed: widget.onPressed,
         style: OutlinedButton.styleFrom(
+          side: BorderSide(color: borderCol),
           padding: EdgeInsets.symmetric(
-            horizontal: ScreenUtil().setWidth(30),
+            horizontal: ScreenUtil().setWidth(20),
             vertical: ScreenUtil().setHeight(10),
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
-            side: BorderSide(color: widget.outlineColor),
           ),
         ),
         child: CustomFont(
           text: widget.buttonName,
-          fontSize: ScreenUtil().setSp(12),
-          color: widget.fontColor,
+          fontSize: ScreenUtil().setSp(13),
+          color: textCol,
+          fontWeight: FontWeight.bold,
         ),
       );
     } else if (widget.buttonType == 'text') {
@@ -48,7 +56,7 @@ class _CustomButtonState extends State<CustomButton> {
         onPressed: widget.onPressed,
         style: TextButton.styleFrom(
           padding: EdgeInsets.symmetric(
-            horizontal: ScreenUtil().setWidth(30),
+            horizontal: ScreenUtil().setWidth(20),
             vertical: ScreenUtil().setHeight(10),
           ),
           shape: RoundedRectangleBorder(
@@ -57,26 +65,34 @@ class _CustomButtonState extends State<CustomButton> {
         ),
         child: CustomFont(
           text: widget.buttonName,
-          fontSize: ScreenUtil().setSp(12),
-          color: widget.fontColor,
+          fontSize: ScreenUtil().setSp(13),
+          color: widget.fontColor ?? (isDark ? Colors.white : FB_PRIMARY),
+          fontWeight: FontWeight.bold,
         ),
       );
     } else {
-      return ElevatedButton(
-        onPressed: widget.onPressed,
-        style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(
-            horizontal: ScreenUtil().setWidth(30),
-            vertical: ScreenUtil().setHeight(10),
+      // filled / elevated
+      return SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: widget.onPressed,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: FB_PRIMARY,
+            foregroundColor: Colors.white,
+            padding: EdgeInsets.symmetric(
+              horizontal: ScreenUtil().setWidth(20),
+              vertical: ScreenUtil().setHeight(12),
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+          child: CustomFont(
+            text: widget.buttonName,
+            fontSize: ScreenUtil().setSp(14),
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
-        ),
-        child: CustomFont(
-          text: widget.buttonName,
-          fontSize: ScreenUtil().setSp(12),
-          color: widget.fontColor,
         ),
       );
     }

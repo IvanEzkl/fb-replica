@@ -40,6 +40,8 @@ class RegodonFacebook extends StatelessWidget {
             brightness: Brightness.light,
             primaryColor: FB_PRIMARY,
             scaffoldBackgroundColor: Colors.white,
+            cardColor: Colors.white,
+            dividerColor: Colors.grey[200],
             colorScheme: const ColorScheme.light(
               primary: FB_PRIMARY,
               secondary: FB_SECONDARY,
@@ -49,6 +51,9 @@ class RegodonFacebook extends StatelessWidget {
             brightness: Brightness.dark,
             primaryColor: FB_DARK_PRIMARY,
             scaffoldBackgroundColor: const Color(0xFF121212),
+            cardColor: const Color(0xFF1E1E1E),
+            dialogTheme: const DialogThemeData(backgroundColor: Color(0xFF1E1E1E)),
+            dividerColor: const Color(0xFF2C2C2C),
             colorScheme: const ColorScheme.dark(
               primary: FB_PRIMARY,
               secondary: FB_SECONDARY,

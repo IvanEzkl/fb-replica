@@ -5,8 +5,8 @@ class CustomFont extends StatelessWidget {
     super.key,
     required this.text,
     required this.fontSize,
-    required this.color,
-    this.fontFamily = 'Fruitger',
+    this.color,
+    this.fontFamily = 'Frutiger',
     this.fontWeight = FontWeight.normal,
     this.textAlign = TextAlign.left,
     this.letterSpacing = 0,
@@ -15,23 +15,38 @@ class CustomFont extends StatelessWidget {
 
   final String text;
   final double fontSize, letterSpacing;
-  final Color color;
+  final Color? color;
   final FontWeight fontWeight;
   final TextAlign textAlign;
   final String fontFamily;
   final FontStyle fontStyle;
+
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    Color effectiveColor;
+
+    if (color == null || color == Colors.black) {
+      effectiveColor = isDark ? Colors.white : Colors.black;
+    } else if (color == Colors.black87) {
+      effectiveColor = isDark ? Colors.white70 : Colors.black87;
+    } else if (color == Colors.black54) {
+      effectiveColor = isDark ? Colors.white60 : Colors.black54;
+    } else {
+      effectiveColor = color!;
+    }
+
     return Text(
       text,
       textAlign: textAlign,
-      style: TextStyle (
+      style: TextStyle(
         fontFamily: fontFamily,
         fontSize: fontSize,
-        color: color,
+        color: effectiveColor,
         fontWeight: fontWeight,
         fontStyle: fontStyle,
-        letterSpacing: letterSpacing),
-      );
+        letterSpacing: letterSpacing,
+      ),
+    );
   }
 }

@@ -71,13 +71,13 @@ class _LogInScreenState extends State<LogInScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Container(
           height: ScreenUtil().screenHeight,
           width: ScreenUtil().screenWidth,
-          color: Colors.white,
           child: Form(
             key: _formKey,
             child: Column(
@@ -103,7 +103,7 @@ class _LogInScreenState extends State<LogInScreen> {
                             value!.isEmpty ? 'Enter your username' : null,
                         onSaved: (value) => usernameController.text = value!,
                         fontSize: ScreenUtil().setSp(15),
-                        fontColor: FB_PRIMARY,
+                        fontColor: isDark ? Colors.white : FB_PRIMARY,
                         hintTextSize: ScreenUtil().setSp(15),
                         hintText: 'Username (e.g. emilys / user)',
                       ),
@@ -117,7 +117,7 @@ class _LogInScreenState extends State<LogInScreen> {
                             value!.isEmpty ? 'Enter your password' : null,
                         onSaved: (value) => passwordController.text = value!,
                         fontSize: ScreenUtil().setSp(15),
-                        fontColor: FB_PRIMARY,
+                        fontColor: isDark ? Colors.white : FB_PRIMARY,
                         hintTextSize: ScreenUtil().setSp(15),
                         hintText: 'Password (e.g. emilyspass / user)',
                       ),
@@ -153,7 +153,7 @@ class _LogInScreenState extends State<LogInScreen> {
                       Text(
                         'You do not have an account? ',
                         style: TextStyle(
-                          color: Colors.black54,
+                          color: isDark ? Colors.white70 : Colors.black54,
                           fontSize: ScreenUtil().setSp(15),
                         ),
                       ),

@@ -201,12 +201,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: Colors.white,
+      body: SizedBox(
         width: 1.sw,
         child: ListView.separated(
           itemCount: _notifications.length,
-          separatorBuilder: (context, index) => const Divider(),
+          separatorBuilder: (context, index) => const Divider(height: 1),
           itemBuilder: (context, index) {
             final item = _notifications[index];
             return CustomInformation(
@@ -222,7 +221,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
               postShares: item['postShares'] ?? 0,
               imageUrl: item['imageUrl'] ?? '',
               hasImage: item['hasImage'] ?? false,
-              userName: 'Ivan Ezekiel Regodon',
+              userName: item['name']!,
               commentText: item['commentText'] ?? '',
             );
           },

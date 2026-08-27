@@ -177,7 +177,9 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
                 text: 'Advertisement/Promotion',
                 fontSize: ScreenUtil().setSp(16),
                 fontWeight: FontWeight.bold,
-                color: Colors.grey[700]!,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.grey[400]
+                    : Colors.grey[700],
               ),
             ),
           );

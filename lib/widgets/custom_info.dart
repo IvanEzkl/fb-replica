@@ -45,6 +45,10 @@ class CustomInformation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryTextColor = isDark ? Colors.white : Colors.black;
+    final secondaryTextColor = isDark ? Colors.grey[400] : Colors.grey[700];
+
     return Container(
       padding: EdgeInsets.all(ScreenUtil().setSp(15)),
       child: InkWell(
@@ -60,7 +64,7 @@ class CustomInformation extends StatelessWidget {
                   postContent: commentText.isNotEmpty
                       ? commentText
                       : (postContent.isNotEmpty ? postContent : description),
-                  date: postDate.isNotEmpty ? postDate : date,
+                  date: postDate.isNotEmpty ? postDate : (date.isNotEmpty ? date : 'Recently'),
                   initialNumOfLikes: postLikes > 0 ? postLikes : numOfLikes,
                   imageUrl: imageUrl,
                   profileImageUrl: profileImageUrl,
@@ -72,12 +76,19 @@ class CustomInformation extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // PROFILE PICTURE LOGIC
-            (profileImageUrl.isEmpty)
-                ? icon
+            profileImageUrl.isEmpty
+                ? CircleAvatar(
+                    radius: ScreenUtil().setSp(20),
+                    backgroundColor: isDark ? Colors.grey[800] : Colors.grey[300],
+                    child: Icon(
+                      Icons.person,
+                      color: isDark ? Colors.white70 : Colors.grey[600],
+                      size: ScreenUtil().setSp(22),
+                    ),
+                  )
                 : CircleAvatar(
                     radius: ScreenUtil().setSp(20),
-                    backgroundColor: Colors.grey[200],
+                    backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
                     backgroundImage: AssetImage(profileImageUrl),
                     onBackgroundImageError: (exception, stackTrace) {
                       print("Error loading profile image: $profileImageUrl");
@@ -91,19 +102,23 @@ class CustomInformation extends StatelessWidget {
                   CustomFont(
                     text: name,
                     fontSize: ScreenUtil().setSp(16),
-                    color: Colors.black,
                     fontWeight: FontWeight.w800,
                   ),
+                  SizedBox(height: ScreenUtil().setHeight(3)),
                   RichText(
                     text: TextSpan(
-                      style: const TextStyle(
-                        color: Colors.black,
+                      style: TextStyle(
+                        color: secondaryTextColor,
                         fontFamily: 'Frutiger',
                       ),
                       children: [
                         TextSpan(
-                          text: 'posted $post: ',
-                          style: TextStyle(fontSize: ScreenUtil().setSp(13)),
+                          text: '$post: ',
+                          style: TextStyle(
+                            fontSize: ScreenUtil().setSp(13),
+                            color: primaryTextColor,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                         TextSpan(
                           text: description,
@@ -111,22 +126,27 @@ class CustomInformation extends StatelessWidget {
                             fontSize: ScreenUtil().setSp(13),
                             fontStyle: FontStyle.italic,
                             fontWeight: FontWeight.w500,
+                            color: secondaryTextColor,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(height: ScreenUtil().setHeight(5)),
-                  CustomFont(
-                    text: date,
-                    fontSize: ScreenUtil().setSp(12),
-                    color: Colors.grey.shade500,
-                  ),
+                  if (date.isNotEmpty) ...[
+                    SizedBox(height: ScreenUtil().setHeight(5)),
+                    CustomFont(
+                      text: date,
+                      fontSize: ScreenUtil().setSp(12),
+                      color: Colors.grey.shade500,
+                    ),
+                  ],
                 ],
               ),
             ),
-
-            const Icon(Icons.more_horiz),
+            Icon(
+              Icons.more_horiz,
+              color: isDark ? Colors.grey[400] : Colors.grey[700],
+            ),
           ],
         ),
       ),

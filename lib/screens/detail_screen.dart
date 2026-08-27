@@ -179,17 +179,20 @@ class _DetailScreenState extends State<DetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final navBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final bubbleBg = isDark ? const Color(0xFF252525) : Colors.grey[100];
+    final inputFillBg = isDark ? const Color(0xFF2C2C2C) : Colors.grey[100];
+
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
         title: CustomFont(
           text: widget.userName,
           fontSize: ScreenUtil().setSp(20),
-          color: Colors.black,
         ),
-        backgroundColor: Colors.white,
-        iconTheme: const IconThemeData(color: Colors.black),
+        backgroundColor: navBg,
+        iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
         elevation: 0.5,
       ),
       body: Column(
@@ -203,7 +206,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     Container(
                       width: double.infinity,
                       height: ScreenUtil().setHeight(250),
-                      color: Colors.grey[200],
+                      color: isDark ? Colors.grey[900] : Colors.grey[200],
                       child: _buildImageWidget(finalPostImage),
                     ),
                   SizedBox(height: ScreenUtil().setHeight(15)),
@@ -217,7 +220,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       children: [
                         CircleAvatar(
                           radius: ScreenUtil().setSp(20),
-                          backgroundColor: Colors.grey[300],
+                          backgroundColor: isDark ? Colors.grey[800] : Colors.grey[300],
                           backgroundImage: widget.profileImageUrl.isNotEmpty &&
                                   widget.profileImageUrl.startsWith('http')
                               ? NetworkImage(widget.profileImageUrl)
@@ -226,7 +229,10 @@ class _DetailScreenState extends State<DetailScreen> {
                                       as ImageProvider
                                   : null),
                           child: widget.profileImageUrl.isEmpty
-                              ? Icon(Icons.person, color: Colors.grey[600])
+                              ? Icon(
+                                  Icons.person,
+                                  color: isDark ? Colors.white70 : Colors.grey[600],
+                                )
                               : null,
                         ),
                         SizedBox(width: ScreenUtil().setWidth(10)),
@@ -237,7 +243,6 @@ class _DetailScreenState extends State<DetailScreen> {
                               text: widget.userName,
                               fontSize: ScreenUtil().setSp(16),
                               fontWeight: FontWeight.bold,
-                              color: Colors.black,
                             ),
                             Row(
                               children: [
@@ -257,7 +262,10 @@ class _DetailScreenState extends State<DetailScreen> {
                           ],
                         ),
                         const Spacer(),
-                        const Icon(Icons.more_horiz),
+                        Icon(
+                          Icons.more_horiz,
+                          color: isDark ? Colors.white70 : Colors.grey[700],
+                        ),
                       ],
                     ),
                   ),
@@ -270,7 +278,6 @@ class _DetailScreenState extends State<DetailScreen> {
                     child: CustomFont(
                       text: widget.postContent,
                       fontSize: ScreenUtil().setSp(14),
-                      color: Colors.black,
                     ),
                   ),
 
@@ -303,10 +310,9 @@ class _DetailScreenState extends State<DetailScreen> {
                         ),
                         TextButton.icon(
                           onPressed: () {},
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.comment_outlined,
                             color: FB_DARK_PRIMARY,
-                            size: ScreenUtil().setSp(18),
                           ),
                           label: CustomFont(
                             text: '${_comments.length} Comments',
@@ -316,14 +322,13 @@ class _DetailScreenState extends State<DetailScreen> {
                         ),
                         TextButton.icon(
                           onPressed: () {},
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.share_outlined,
                             color: FB_DARK_PRIMARY,
-                            size: ScreenUtil().setSp(18),
                           ),
-                          label: CustomFont(
+                          label: const CustomFont(
                             text: 'Share',
-                            fontSize: ScreenUtil().setSp(13),
+                            fontSize: 13,
                             color: FB_DARK_PRIMARY,
                           ),
                         ),
@@ -343,7 +348,6 @@ class _DetailScreenState extends State<DetailScreen> {
                       text: 'Comments',
                       fontSize: ScreenUtil().setSp(16),
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
                     ),
                   ),
                   SizedBox(height: ScreenUtil().setHeight(8)),
@@ -402,7 +406,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                     ScreenUtil().setSp(10),
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.grey[100],
+                                    color: bubbleBg,
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Column(
@@ -413,7 +417,6 @@ class _DetailScreenState extends State<DetailScreen> {
                                         text: comment.user.fullName,
                                         fontSize: ScreenUtil().setSp(13),
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.black,
                                       ),
                                       SizedBox(
                                         height: ScreenUtil().setHeight(3),
@@ -421,7 +424,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                       CustomFont(
                                         text: comment.body,
                                         fontSize: ScreenUtil().setSp(13),
-                                        color: Colors.black87,
+                                        color: isDark ? Colors.white70 : Colors.black87,
                                       ),
                                       if (comment.likes > 0) ...[
                                         SizedBox(
@@ -440,7 +443,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                             CustomFont(
                                               text: '${comment.likes}',
                                               fontSize: ScreenUtil().setSp(11),
-                                              color: Colors.grey[700]!,
+                                              color: isDark ? Colors.grey[400] : Colors.grey[700]!,
                                             ),
                                           ],
                                         ),
@@ -467,10 +470,10 @@ class _DetailScreenState extends State<DetailScreen> {
               vertical: ScreenUtil().setHeight(8),
             ),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: navBg,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 5,
                   offset: const Offset(0, -2),
                 ),
@@ -482,18 +485,22 @@ class _DetailScreenState extends State<DetailScreen> {
                   Expanded(
                     child: TextField(
                       controller: _commentController,
+                      style: TextStyle(
+                        fontSize: ScreenUtil().setSp(13),
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
                       decoration: InputDecoration(
                         hintText: 'Write a comment...',
                         hintStyle: TextStyle(
                           fontSize: ScreenUtil().setSp(13),
-                          color: Colors.grey,
+                          color: isDark ? Colors.grey[500] : Colors.grey,
                         ),
                         contentPadding: EdgeInsets.symmetric(
                           horizontal: ScreenUtil().setWidth(14),
                           vertical: ScreenUtil().setHeight(8),
                         ),
                         filled: true,
-                        fillColor: Colors.grey[100],
+                        fillColor: inputFillBg,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20),
                           borderSide: BorderSide.none,
