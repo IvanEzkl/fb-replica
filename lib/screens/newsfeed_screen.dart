@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../models/post.dart';
+import '../models/user.dart';
 import '../services/post_service.dart';
+import '../services/user_service.dart';
 import '../widgets/post_card.dart';
 import '../widgets/custom_font.dart';
 import '../constants.dart';
 
 class NewsFeedScreen extends StatefulWidget {
-  const NewsFeedScreen({super.key});
+  final User? user;
+  const NewsFeedScreen({super.key, this.user});
 
   @override
   State<NewsFeedScreen> createState() => _NewsFeedScreenState();
@@ -15,97 +18,163 @@ class NewsFeedScreen extends StatefulWidget {
 
 class _NewsFeedScreenState extends State<NewsFeedScreen> {
   final PostService _postService = PostService();
+  final UserService _userService = UserService();
   List<Post> _apiPosts = [];
   bool _isLoading = true;
+  User? _currentUser;
+
+  // Real user pool for dynamic feed attribution
+  static const List<Map<String, String>> _usersPool = [
+    {
+      'name': 'Emily Johnson',
+      'image': 'https://dummyjson.com/icon/emilys/128',
+    },
+    {
+      'name': 'Michael Williams',
+      'image': 'https://dummyjson.com/icon/michaelw/128',
+    },
+    {
+      'name': 'Sophia Brown',
+      'image': 'https://dummyjson.com/icon/sophiab/128',
+    },
+    {
+      'name': 'James Smith',
+      'image': 'https://dummyjson.com/icon/james/128',
+    },
+    {
+      'name': 'Emma Martinez',
+      'image': 'https://dummyjson.com/icon/emma/128',
+    },
+    {
+      'name': 'Olivia Davis',
+      'image': 'https://dummyjson.com/icon/olivia/128',
+    },
+    {
+      'name': 'Alexander Jones',
+      'image': 'https://dummyjson.com/icon/alexander/128',
+    },
+    {
+      'name': 'Liam Wilson',
+      'image': 'https://dummyjson.com/icon/liam/128',
+    },
+    {
+      'name': 'Noah Taylor',
+      'image': 'https://dummyjson.com/icon/noah/128',
+    },
+    {
+      'name': 'Isabella Cruz',
+      'image': 'https://dummyjson.com/icon/isabella/128',
+    },
+    {
+      'name': 'Cyrus Robles',
+      'image': 'https://i.pravatar.cc/150?img=11',
+    },
+    {
+      'name': 'Maria Santos',
+      'image': 'https://i.pravatar.cc/150?img=5',
+    },
+    {
+      'name': 'John Dela Cruz',
+      'image': 'https://i.pravatar.cc/150?img=13',
+    },
+    {
+      'name': 'Anna Garcia',
+      'image': 'https://i.pravatar.cc/150?img=9',
+    },
+    {
+      'name': 'Luis Fernandez',
+      'image': 'https://i.pravatar.cc/150?img=14',
+    },
+  ];
 
   final List<Map<String, dynamic>> _placeholderPosts = [
     {
       'postId': 1,
-      'userName': 'Ivan Regodon',
-      'postContent': 'Mic Test',
+      'userName': 'Cyrus Robles',
+      'postContent': 'Just wrapped up an incredible hackathon with the dev team! 💻🔥',
       'numOfLikes': 67,
       'numOfComments': 12,
       'numOfShares': 5,
-      'date': 'October 11',
-      'hasImage': false,
-      'imageUrl': '',
-      'profileImageUrl': 'https://i.pravatar.cc/150?img=1',
+      'date': '2 hours ago',
+      'hasImage': true,
+      'imageUrl': 'https://picsum.photos/400/300?random=1',
+      'profileImageUrl': 'https://i.pravatar.cc/150?img=11',
     },
     {
       'postId': 2,
-      'userName': 'Ivan Regodon',
-      'postContent': 'Ih ambang es',
+      'userName': 'Maria Santos',
+      'postContent': 'Serene sunset walk by the coastline. Nothing beats this tranquility 🌅',
       'numOfLikes': 619,
       'numOfComments': 45,
       'numOfShares': 23,
-      'date': 'November 28',
+      'date': 'Yesterday',
       'hasImage': true,
-      'imageUrl': 'https://picsum.photos/400/300?random=1',
-      'profileImageUrl': 'https://i.pravatar.cc/150?img=1',
+      'imageUrl': 'https://picsum.photos/400/300?random=2',
+      'profileImageUrl': 'https://i.pravatar.cc/150?img=5',
     },
     {
       'postId': 3,
-      'userName': 'Flutter Dev',
-      'postContent': 'Another post to show the list is dynamic.',
-      'numOfLikes': 5,
-      'numOfComments': 2,
-      'numOfShares': 1,
-      'date': 'December 1',
+      'userName': 'John Dela Cruz',
+      'postContent': 'Building cross-platform apps with Flutter is pure joy. Fast, fluid, and scalable!',
+      'numOfLikes': 42,
+      'numOfComments': 9,
+      'numOfShares': 4,
+      'date': '2 days ago',
       'hasImage': false,
       'imageUrl': '',
-      'profileImageUrl': 'https://i.pravatar.cc/150?img=12',
+      'profileImageUrl': 'https://i.pravatar.cc/150?img=13',
     },
     {
       'postId': 4,
-      'userName': 'Code Master',
-      'postContent': 'Debugging all night long. ☕ #DevelopersLife',
+      'userName': 'Anna Garcia',
+      'postContent': 'Coffee brewed, playlist on, debugging mode activated ☕🎧 #DevLife',
       'numOfLikes': 120,
       'numOfComments': 28,
       'numOfShares': 15,
-      'date': 'December 2',
+      'date': '3 days ago',
       'hasImage': true,
-      'imageUrl': 'https://picsum.photos/400/300?random=2',
-      'profileImageUrl': 'https://i.pravatar.cc/150?img=33',
+      'imageUrl': 'https://picsum.photos/400/300?random=3',
+      'profileImageUrl': 'https://i.pravatar.cc/150?img=9',
     },
     {
       'postId': 5,
-      'userName': 'Travel Buddy',
-      'postContent': 'Missing the beach vibes! 🌊',
+      'userName': 'Luis Fernandez',
+      'postContent': 'Weekend mountain hike! Recharging for the upcoming sprint ⛰️🌲',
       'numOfLikes': 89,
       'numOfComments': 18,
       'numOfShares': 7,
-      'date': 'December 3',
+      'date': '4 days ago',
       'hasImage': true,
-      'imageUrl': 'https://picsum.photos/400/300?random=3',
-      'profileImageUrl': 'https://i.pravatar.cc/150?img=25',
+      'imageUrl': 'https://picsum.photos/400/300?random=4',
+      'profileImageUrl': 'https://i.pravatar.cc/150?img=14',
     },
   ];
 
   final List<Map<String, dynamic>> _advertisements = [
     {
       'postId': 999,
-      'userName': 'Sponsored',
+      'userName': 'Google Developers',
       'postContent':
-          'Summer Sale! Get up to 50% off on all summer collections. Limited time offer!',
-      'numOfLikes': 234,
-      'numOfComments': 45,
-      'numOfShares': 67,
+          'Supercharge your apps with Flutter 3. Modern UI, hot reload, and cross-platform native speed!',
+      'numOfLikes': 432,
+      'numOfComments': 56,
+      'numOfShares': 89,
       'date': 'Sponsored',
       'hasImage': true,
-      'imageUrl': 'https://picsum.photos/400/300?random=4',
-      'profileImageUrl': 'https://i.pravatar.cc/150?img=68',
+      'imageUrl': 'https://picsum.photos/400/300?random=6',
+      'profileImageUrl': 'https://i.pravatar.cc/150?img=60',
     },
     {
       'postId': 998,
-      'userName': 'Sponsored',
+      'userName': 'Tech Gear Weekly',
       'postContent':
-          'New Course Available: Learn Flutter development from scratch. Enroll today and get certified!',
-      'numOfLikes': 156,
-      'numOfComments': 23,
-      'numOfShares': 34,
+          'Discover top developer mechanical keyboards and ergonomic desk setups. Exclusive 20% discount!',
+      'numOfLikes': 210,
+      'numOfComments': 31,
+      'numOfShares': 42,
       'date': 'Sponsored',
       'hasImage': true,
-      'imageUrl': 'https://picsum.photos/400/300?random=5',
+      'imageUrl': 'https://picsum.photos/400/300?random=7',
       'profileImageUrl': 'https://i.pravatar.cc/150?img=68',
     },
   ];
@@ -113,7 +182,20 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
   @override
   void initState() {
     super.initState();
+    _currentUser = widget.user;
+    _loadUser();
     _fetchPosts();
+  }
+
+  Future<void> _loadUser() async {
+    if (_currentUser == null) {
+      final user = await _userService.getSavedUser();
+      if (mounted && user != null) {
+        setState(() {
+          _currentUser = user;
+        });
+      }
+    }
   }
 
   Future<void> _fetchPosts() async {
@@ -134,6 +216,11 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
     }
   }
 
+  Map<String, String> _getUserInfoForPost(int userId) {
+    final index = (userId - 1) % _usersPool.length;
+    return _usersPool[index >= 0 ? index : 0];
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -142,24 +229,30 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
       );
     }
 
+    final currentUserAvatar = _currentUser?.image ?? 'assets/icons/superpogi.jpg';
     List<Widget> feedItems = [];
 
     if (_apiPosts.isNotEmpty) {
       int adIdx = 0;
       for (int i = 0; i < _apiPosts.length; i++) {
         final post = _apiPosts[i];
+        final author = _getUserInfoForPost(post.userId);
+        final hasImg = i % 2 == 1; // Give alternating posts an image
+        final imgUrl = hasImg ? 'https://picsum.photos/400/300?random=${100 + post.id}' : '';
+
         feedItems.add(
           NewsFeedCard(
             postId: post.id,
-            userName: 'User #${post.userId}',
+            userName: author['name']!,
             postContent: post.body,
             numOfLikes: post.likes,
-            numOfComments: 5,
-            numOfShares: 2,
-            date: 'Recently',
-            hasImage: false,
-            imageUrl: '',
-            profileImageUrl: 'https://i.pravatar.cc/150?img=${(post.userId % 70) + 1}',
+            numOfComments: 5 + (post.id % 10),
+            numOfShares: 2 + (post.id % 5),
+            date: '${(i % 5) + 1} hours ago',
+            hasImage: hasImg,
+            imageUrl: imgUrl,
+            profileImageUrl: author['image']!,
+            currentUserImageUrl: currentUserAvatar,
           ),
         );
 
@@ -195,13 +288,14 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
               hasImage: ad['hasImage'],
               imageUrl: ad['imageUrl'] ?? '',
               profileImageUrl: ad['profileImageUrl'] ?? '',
+              currentUserImageUrl: currentUserAvatar,
             ),
           );
           adIdx++;
         }
       }
     } else {
-      // Fallback placeholder posts
+      // Fallback placeholder posts with distinct authors
       for (final post in _placeholderPosts) {
         feedItems.add(
           NewsFeedCard(
@@ -215,6 +309,7 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
             hasImage: post['hasImage'],
             imageUrl: post['imageUrl'] ?? '',
             profileImageUrl: post['profileImageUrl'] ?? '',
+            currentUserImageUrl: currentUserAvatar,
           ),
         );
       }

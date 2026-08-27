@@ -87,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         },
         children: [
-          const NewsFeedScreen(),
+          NewsFeedScreen(user: _currentUser),
           NotificationScreen(user: _currentUser),
           ProfileScreen(
             user: _currentUser,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../constants.dart';
+import '../services/user_service.dart';
 import 'custom_font.dart';
 import '../screens/detail_screen.dart';
 
@@ -16,6 +17,7 @@ class NewsFeedCard extends StatefulWidget {
   final bool hasImage;
   final String imageUrl;
   final String profileImageUrl;
+  final String? currentUserImageUrl;
 
   const NewsFeedCard({
     super.key,
@@ -28,6 +30,7 @@ class NewsFeedCard extends StatefulWidget {
     this.hasImage = false,
     this.imageUrl = '',
     this.profileImageUrl = '',
+    this.currentUserImageUrl,
     required this.date,
   });
 
@@ -38,11 +41,29 @@ class NewsFeedCard extends StatefulWidget {
 class _NewsFeedCardState extends State<NewsFeedCard> {
   late int _likes;
   bool _isLiked = false;
+  String _effectiveUserAvatar = '';
 
   @override
   void initState() {
     super.initState();
     _likes = widget.numOfLikes;
+    _loadCurrentUserAvatar();
+  }
+
+  Future<void> _loadCurrentUserAvatar() async {
+    if (widget.currentUserImageUrl != null &&
+        widget.currentUserImageUrl!.isNotEmpty) {
+      setState(() {
+        _effectiveUserAvatar = widget.currentUserImageUrl!;
+      });
+    } else {
+      final user = await UserService().getSavedUser();
+      if (mounted && user != null && user.image.isNotEmpty) {
+        setState(() {
+          _effectiveUserAvatar = user.image;
+        });
+      }
+    }
   }
 
   void _toggleLike() {
@@ -116,6 +137,46 @@ class _NewsFeedCardState extends State<NewsFeedCard> {
     );
   }
 
+  Widget _buildAvatar(String url, double radius, bool isDark) {
+    if (url.isNotEmpty && url.startsWith('http')) {
+      return CircleAvatar(
+        backgroundColor: isDark ? Colors.grey[800] : Colors.grey[300],
+        radius: ScreenUtil().setSp(radius),
+        child: ClipOval(
+          child: CachedNetworkImage(
+            imageUrl: url,
+            fit: BoxFit.cover,
+            width: ScreenUtil().setSp(radius * 2),
+            height: ScreenUtil().setSp(radius * 2),
+            placeholder: (context, url) => Icon(
+              Icons.person,
+              color: Colors.white,
+              size: ScreenUtil().setSp(radius * 1.2),
+            ),
+            errorWidget: (context, url, error) => Icon(
+              Icons.person,
+              color: Colors.white,
+              size: ScreenUtil().setSp(radius * 1.2),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return CircleAvatar(
+      backgroundColor: isDark ? Colors.grey[800] : Colors.grey[300],
+      radius: ScreenUtil().setSp(radius),
+      backgroundImage: url.isNotEmpty ? AssetImage(url) as ImageProvider : null,
+      child: url.isEmpty
+          ? Icon(
+              Icons.person,
+              color: isDark ? Colors.white70 : Colors.white,
+              size: ScreenUtil().setSp(radius * 1.2),
+            )
+          : null,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -133,52 +194,11 @@ class _NewsFeedCardState extends State<NewsFeedCard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Author Row
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  widget.profileImageUrl.isNotEmpty &&
-                          widget.profileImageUrl.startsWith('http')
-                      ? CircleAvatar(
-                          backgroundColor:
-                              isDark ? Colors.grey[800] : Colors.grey[300],
-                          radius: ScreenUtil().setSp(20),
-                          child: ClipOval(
-                            child: CachedNetworkImage(
-                              imageUrl: widget.profileImageUrl,
-                              fit: BoxFit.cover,
-                              width: ScreenUtil().setSp(40),
-                              height: ScreenUtil().setSp(40),
-                              placeholder: (context, url) => Icon(
-                                Icons.person,
-                                color: Colors.white,
-                                size: ScreenUtil().setSp(25),
-                              ),
-                              errorWidget: (context, url, error) => Icon(
-                                Icons.person,
-                                color: Colors.white,
-                                size: ScreenUtil().setSp(25),
-                              ),
-                            ),
-                          ),
-                        )
-                      : CircleAvatar(
-                          backgroundColor:
-                              isDark ? Colors.grey[800] : Colors.grey[300],
-                          radius: ScreenUtil().setSp(20),
-                          backgroundImage: widget.profileImageUrl.isNotEmpty
-                              ? AssetImage(widget.profileImageUrl)
-                                  as ImageProvider
-                              : null,
-                          child: widget.profileImageUrl.isEmpty
-                              ? Icon(
-                                  Icons.person,
-                                  color: isDark
-                                      ? Colors.white70
-                                      : Colors.white,
-                                  size: ScreenUtil().setSp(25),
-                                )
-                              : null,
-                        ),
+                  _buildAvatar(widget.profileImageUrl, 20, isDark),
                   SizedBox(width: ScreenUtil().setWidth(10)),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -218,6 +238,7 @@ class _NewsFeedCardState extends State<NewsFeedCard> {
               _buildPostImage(),
               SizedBox(height: ScreenUtil().setHeight(10)),
 
+              // Likes, Comments, Shares counts
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -267,51 +288,11 @@ class _NewsFeedCardState extends State<NewsFeedCard> {
                   ),
                 ],
               ),
+
+              // Comment Input Preview Row with Logged-in User's Avatar
               Row(
                 children: [
-                  widget.profileImageUrl.isNotEmpty &&
-                          widget.profileImageUrl.startsWith('http')
-                      ? CircleAvatar(
-                          backgroundColor:
-                              isDark ? Colors.grey[800] : Colors.grey[300],
-                          radius: ScreenUtil().setSp(15),
-                          child: ClipOval(
-                            child: CachedNetworkImage(
-                              imageUrl: widget.profileImageUrl,
-                              fit: BoxFit.cover,
-                              width: ScreenUtil().setSp(30),
-                              height: ScreenUtil().setSp(30),
-                              placeholder: (context, url) => Icon(
-                                Icons.person,
-                                color: Colors.white,
-                                size: ScreenUtil().setSp(20),
-                              ),
-                              errorWidget: (context, url, error) => Icon(
-                                Icons.person,
-                                color: Colors.white,
-                                size: ScreenUtil().setSp(20),
-                              ),
-                            ),
-                          ),
-                        )
-                      : CircleAvatar(
-                          backgroundColor:
-                              isDark ? Colors.grey[800] : Colors.grey[300],
-                          radius: ScreenUtil().setSp(15),
-                          backgroundImage: widget.profileImageUrl.isNotEmpty
-                              ? AssetImage(widget.profileImageUrl)
-                                  as ImageProvider
-                              : null,
-                          child: widget.profileImageUrl.isEmpty
-                              ? Icon(
-                                  Icons.person,
-                                  color: isDark
-                                      ? Colors.white70
-                                      : Colors.white,
-                                  size: ScreenUtil().setSp(20),
-                                )
-                              : null,
-                        ),
+                  _buildAvatar(_effectiveUserAvatar, 15, isDark),
                   SizedBox(width: ScreenUtil().setWidth(10)),
                   Expanded(
                     child: GestureDetector(
