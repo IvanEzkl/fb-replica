@@ -37,6 +37,11 @@ The project follows a **Layered Architecture** with a clear separation of concer
 
 ---
 
+---
+
+## Discussion
+Discussion - The app follows a strict Model → Service → Screen flow. Models (post.dart, user.dart, comment.dart) define typed Dart objects via fromJson(), with no knowledge of networking or UI. Services (post_service.dart, user_service.dart, comment_service.dart) handle all HTTP communication with dummyjson.com, parsing JSON responses into Model instances and returning them as Futures; they also manage side effects like saving session data via shared_preferences. Screens (splash_screen.dart, profile_screen.dart, settings_screen.dart) never call the API directly — they use FutureBuilder to invoke Service methods on initState() or user actions, showing a loading indicator until the typed data resolves and can be rendered. This one-way flow keeps each layer decoupled: Models don't know about HTTP, Services don't know about widgets, and Screens don't know about raw JSON.
+
 ## 🔗 Public Repository Link
 
 - **GitHub Repository**: [https://github.com/IvanEzkl/fb-replica](https://github.com/IvanEzkl/fb-replica)
